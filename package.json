@@ -1,0 +1,37 @@
+{
+    "name": "Dynamic_Chart",
+    "version": "1.0.0",
+    "description": "Dynamic_Chart",
+    "scripts": {
+        "dev": "ts-node src",
+        "build": "tsc && node dist",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "rollup": "rollup -c"
+    },
+    "main": "src/index.ts",
+    "files": [
+        "dist"
+    ],
+    "types": "dist/index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ChartStudio/Dynamic_Chart.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ChartStudio/Dynamic_Chart/issues"
+    },
+    "homepage": "https://github.com/ChartStudio/Dynamic_Chart#readme",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^24.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.1",
+        "@rollup/plugin-typescript": "^10.0.1",
+        "@types/node": "^18.11.17",
+        "rollup": "^3.7.5",
+        "rollup-plugin-dts": "^5.0.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.9.4"
+    }
+}

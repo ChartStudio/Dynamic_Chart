@@ -1,3 +1,6 @@
+import {HorizontalStyleConfig, VerticalStyleConfig, LineStyleConfig, BackgroundStyleConfig} from '../config'
+import {HorizontalStyle, VerticalStyle, LineStyle, BackgroundStyle} from '../type'
+
 interface GraphData {
   x: number,
   y: number
@@ -6,16 +9,20 @@ interface GraphData {
 interface Options {
   xAxisOption: XAxisOption,
   yAxisOption: YAxisOption,
+  lineOption?: LineStyle,
+  backgroundOption?: BackgroundStyle,
   width: number,
   height: number
 }
 
 interface XAxisOption {
   space: number
+  style?: VerticalStyle
 }
 
 interface YAxisOption {
   space: number
+  style?: HorizontalStyle
 }
 
 class BaseConfig {
@@ -34,7 +41,12 @@ class BaseConfig {
   totalYHeight: number;
   xAxisOption: XAxisOption;
   yAxisOption: YAxisOption;
-  // options: Options;
+
+  // Style Option
+  horizontalConfig: HorizontalStyleConfig;
+  verticalConfig: VerticalStyleConfig;
+  lineConfig: LineStyleConfig;
+  backgroundConfig: BackgroundStyleConfig;
 
   constructor(type: string, data: GraphData[], options: Options) {
     this.type = type;
@@ -52,7 +64,12 @@ class BaseConfig {
     this.totalYHeight =this.maxYAxis - this.minYAxis
     this.yAxisUnit = this.buildYAxisUnit()
     this.xAxisUnit = this.buildXAxisUnit()
-    // this.options = options;
+
+    // style config
+    this.horizontalConfig = new HorizontalStyleConfig(options.yAxisOption.style)
+    this.verticalConfig = new VerticalStyleConfig(options.xAxisOption.style)
+    this.lineConfig = new LineStyleConfig(options.lineOption)
+    this.backgroundConfig = new BackgroundStyleConfig(options.backgroundOption)
   }
 
   /**

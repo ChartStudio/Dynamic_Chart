@@ -1,7 +1,12 @@
 import BaseConfig from "./core.config"
+import Styler from './core.styler'
+import Drawer from './core.drawer'
+import Animation from "./core.animation";
+import EventListener from "./core.event.listener";
+import { HoverListener } from "../listener";
 
 class BaseChart {
-  canvas: HTMLCanvasElement;
+  private canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
   width: number;
   height: number;
@@ -11,6 +16,10 @@ class BaseChart {
 
   baseXAxisMargin: number;
   baseYAxisMargin: number;
+  isOnloadNBackgroundImage: boolean = false;
+
+  // Event Listener Object
+  event: EventListener;
 
   constructor(canvas: HTMLCanvasElement, config: BaseConfig) {
     this.canvas = canvas;
@@ -28,22 +37,18 @@ class BaseChart {
     this.baseXAxisMargin = 10;
     this.baseYAxisMargin = 10;
 
-    // first time must refresh canvas
-    this.refresh()
-    this.init()
+    // event object
+    this.event = new EventListener(this.canvas)
+
+    // loading Screen
+    this.loadScreen()
+    // loading Event
+    this.loadEvent()
   }
 
-  refresh() {
-    this.context?.clearRect(0, 0, this.width + 100, this.height + 100)
-  }
-
-  init() {
-    this.background()
-    this.yAxis()
-    this.xAxis()
-    this.line()
-  }
-
+  /**
+   * base setting canvas
+   */
   area(config: BaseConfig) {
     this.canvas.style.width = config.width + 'px';
     this.canvas.style.height = config.height + 'px';
@@ -51,32 +56,90 @@ class BaseChart {
     this.canvas.height = this.canvas.offsetHeight;
   }
 
-  background() {
+  /**
+   * generate chart
+   */
+  loadScreen() {
+    if (this.config.lineConfig.enableAnimation === true) {
+      Animation.drawLineAnimation(this, 1, () => {
+        this.init()
+      })
+    } else {
+      this.init()
+    }
+  }
+
+   /**
+   * load event
+   */
+  loadEvent() {
+    this.event.mouseMoveEvent(HoverListener.basicHoverEvent)
+  }
+
+  refresh() {
+    this.context?.clearRect(0, 0, this.width + 100, this.height + 100)
+  }
+
+  init() {
+    this.refresh()
+    this.background(() => {
+      this.yAxis()
+      this.xAxis()
+      this.line()
+    })
+  }
+
+  background(callback: Function) {
+    if (this.config.backgroundConfig.isActvie === false) {
+      callback()
+      return;
+    }
+    if (this.isOnloadNBackgroundImage === true){
+      Drawer.reloadBackgroundToImage(
+        this.context,
+        this.width,
+        this.height,
+        this.config.backgroundConfig.image
+      )
+      callback()
+    } else if (this.config.backgroundConfig.isImage === true) {
+      Drawer.drawBackgroundToImage(
+        this.context,
+        this.width,
+        this.height,
+        this.config.backgroundConfig.image
+      ).then((_) => {
+        this.isOnloadNBackgroundImage = true
+        callback()
+      })
+    } else {
+      Drawer.drawBackground(
+        this.context,
+        this.width,
+        this.height,
+        this.config.backgroundConfig.fillStyle,
+        this.config.backgroundConfig.opacity
+      )
+      callback()
+    }
   }
 
   xAxis() {
-    this.context!.fillStyle = '#111111'; // TODO(go to options)
-    this.context!.font = '10px'; // TODO(go to options)
-    this.context!.strokeStyle = '#111111'; // TODO(go to options)
-    this.context!.lineWidth = 1; // TODO(go to options)
-    this.context!.textBaseline = "bottom";
-    this.context!.textAlign = "center";
+    Styler.setVerticalStyle(this.context, this.config.verticalConfig)
     
     let baseXDrawPoint = this.config.minXAxis
     let baseXDrawPixel = this.baseXAxisPadding
     let baseXDrawInterval = (this.width - this.baseXAxisMargin - this.baseXAxisPadding) / (this.config.xAxisOption.space - 1)
     
     for (let i = 0; i < this.config.xAxisOption.space; i++) {
-      this.context!.lineWidth = 1; // TODO(go to options)
       this.context?.fillText(baseXDrawPoint.toString(), baseXDrawPixel, this.height);
       
-      // TODO(horizantal line paht -> it must be customized)
-      this.context!.lineWidth = 0.1; // TODO(go to options)
-      this.context?.beginPath();
-      this.context?.moveTo(baseXDrawPixel, this.height - this.baseYAxisPadding);
-      this.context?.lineTo(baseXDrawPixel, this.baseYAxisMargin);
-      this.context?.stroke();
-      this.context?.closePath();
+      if (this.config.verticalConfig.drawLine === true) {
+        Drawer.drawVerticalLine(
+          this.context, baseXDrawPixel, this.height - this.baseYAxisPadding, this.baseYAxisMargin
+        )
+      }
+
 
       baseXDrawPoint += this.config.xAxisUnit;
       baseXDrawPixel += baseXDrawInterval;
@@ -84,10 +147,7 @@ class BaseChart {
   }
 
   yAxis() {
-    this.context!.fillStyle = '#111111'; // TODO(go to options)
-    this.context!.font = '10px'; // TODO(go to options)
-    this.context!.lineWidth = 0.1; // TODO(go to options)
-    this.context!.textBaseline = "middle";
+    Styler.setHorizontalStyle(this.context, this.config.horizontalConfig)
 
     let baseYDrawPoint = this.config.minYAxis
     let baseYDrawPixel = this.height - this.baseYAxisPadding
@@ -96,13 +156,11 @@ class BaseChart {
     for (let i = 0; i < this.config.yAxisOption.space; i++) {
       this.context?.fillText(baseYDrawPoint.toString(), 0, baseYDrawPixel);
       
-      // TODO(horizantal line paht -> it must be customized)
-      this.context!.lineWidth = 0.1; // TODO(go to options)
-      this.context?.beginPath();
-      this.context?.moveTo(this.baseXAxisPadding, baseYDrawPixel);
-      this.context?.lineTo(this.width - this.baseXAxisMargin, baseYDrawPixel);
-      this.context?.stroke();
-      this.context?.closePath();
+      if (this.config.horizontalConfig.drawLine === true) {
+        Drawer.drawHorizontalLine(
+          this.context, this.baseXAxisPadding, this.width - this.baseXAxisMargin, baseYDrawPixel
+        )
+      }
 
       baseYDrawPoint += this.config.yAxisUnit;
       baseYDrawPixel -= baseYDrawInterval;
@@ -110,13 +168,9 @@ class BaseChart {
   }
 
   line() {
-    this.context!.strokeStyle = '#111111'; // TODO(go to options)
-    this.context!.fillStyle = '#111111'; // TODO(go to options)
-    this.context!.lineCap = 'round'; // TODO(go to options)
-    this.context!.lineWidth = 2; // TODO(go to options)
+    Styler.setLineStyle(this.context, this.config.lineConfig)
 
     this.context?.beginPath();
-
     this.context?.moveTo(
       this.getXAxisDataPixel(this.config.xAxisData[0]) + this.baseXAxisPadding,
       this.getYAxisDataPixel(this.config.yAxisData[0]) - this.baseYAxisPadding
@@ -130,6 +184,17 @@ class BaseChart {
     }
 
     this.context?.stroke();
+    if (this.config.lineConfig.isFull == true) {
+      Drawer.drawLineFull(
+        this.context, 
+        this.width - this.baseXAxisMargin,
+        this.baseXAxisPadding,
+        this.height - this.baseYAxisPadding,
+        this.config.lineConfig.fullFillStyle,
+        this.config.lineConfig.fullOpacity
+      )
+    }
+
     this.context?.closePath();
   }
 

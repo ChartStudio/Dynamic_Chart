@@ -7,7 +7,6 @@ const DEFAULT_LINE_WIDTH = 2;
 const DEFAULT_IS_FULL = false;
 const DEFAULT_FULL_FILL_STYLE = '#111111';
 const DEFAULT_FULL_OPACITY = 0.2;
-const DEFAULT_ANIMATION = false;
 
 class LineStyleConfig {
   strokeStyle: string = DEFAULT_STROKE_STYLE;
@@ -17,7 +16,6 @@ class LineStyleConfig {
   isFull: boolean = DEFAULT_IS_FULL;
   fullFillStyle: string = DEFAULT_FULL_FILL_STYLE;
   fullOpacity: number = DEFAULT_FULL_OPACITY;
-  enableAnimation: boolean = DEFAULT_ANIMATION;
 
   constructor(style: LineStyle | undefined) {
     if (style !== undefined) {
@@ -28,7 +26,6 @@ class LineStyleConfig {
       this.isFull = style.isFull ?? DEFAULT_IS_FULL
       this.fullFillStyle = style.fullFillStyle ?? DEFAULT_FULL_FILL_STYLE
       this.fullOpacity = style.fullOpacity ?? DEFAULT_FULL_OPACITY
-      this.enableAnimation = style.enableAnimation ?? DEFAULT_ANIMATION
     }
   }
 }

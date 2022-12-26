@@ -1,70 +1,250 @@
 <div>
-  <canvas id="myChart"></canvas>
+  <p style="font-size: 14px; font-weight: bold;">Simple Chart</p>
+  <canvas id="simpleChart"></canvas>
+</div>
+<div>
+  <p style="font-size: 14px; font-weight: bold;">Image Chart</p>
+  <canvas id="imageChart"></canvas>
 </div>
 
 <script type="module">
   import {BaseChart, BaseConfig} from "../../dist/esm/index.js"
   
-  const ctx = document.getElementById('myChart');
-  var image = new Image()
-  image.src = "minky.jpg"
+  const simpleChart = document.getElementById('simpleChart');
+
   new BaseChart(
-    ctx,
+    simpleChart,
     new BaseConfig(
-      "test",
-      [
-        {x: 0, y: 0},
-        {x: 1, y: 1},
-        {x: 2, y: 2},
-        {x: 3, y: 6},
-        {x: 4, y: 4},
-        {x: 5, y: 4},
-        {x: 6, y: 6},
-        {x: 7, y: 7},
-        {x: 8, y: 1},
-        {x: 9, y: 3},
-        // {x: 10, y: 2},
-      ],
       {
+        type: "test",
         width: 600,
-        height: 400,
-        backgroundOption: {
-          isActvie: true,
-          fillStyle: "#1111111",
-          opacity: 0.5,
-          isImage: true,
-          image: image,
-        },
-        lineOption: {
-          strokeStyle: "#FF33FF",
-          fillStyle: "#FF33FF",
-          lineWidth: 3,
-          isFull: true,
-          fullFillStyle: '#FF33FF',
-          fullOpacity: 0.2,
-          enableAnimation: true,
-        },
-        xAxisOption: {
-          space: 10,
-          style: {
-            strokeStyle: "#ffffff",
-            fillStyle: "#ffffff",
-            font: '14px Noto Sans KR',
-            lineWidth: 1,
-            drawLine: true,
-          }
-        },
-        yAxisOption: {
-          space: 10,
-          style: {
-            strokeStyle: "#ffffff",
-            fillStyle: "#ffffff",
-            font: '14px Noto Sans KR',
-            lineWidth: 1,
-            drawLine: true
+        height: 250,
+        graph: {
+          background: {
+            isActvie: false,
+            fillStyle: "#1111111",
+            opacity: 0.5,
+            isImage: false,
+            image: image,
+          },
+          line: {
+            datasets: [
+              {
+                data: [
+                  {x: 0, y: 0},
+                  {x: 1, y: 1},
+                  {x: 2, y: 2},
+                  {x: 3, y: 6},
+                  {x: 4, y: 4},
+                  {x: 5, y: 4},
+                  {x: 6, y: 6},
+                  {x: 7, y: 7},
+                  {x: 8, y: 1},
+                  {x: 9, y: 3},
+                ],
+                style: {
+                  strokeStyle: "#FF33FF",
+                  fillStyle: "#FF33FF",
+                  lineWidth: 3,
+                  isFull: true,
+                  fullFillStyle: '#FF33FF',
+                  fullOpacity: 0.5
+                }
+              },
+              {
+                data: [
+                  {x: 0, y: 0},
+                  {x: 1, y: 3},
+                  {x: 2, y: 3},
+                  {x: 3, y: 2},
+                  {x: 4, y: 2},
+                  {x: 5, y: 3},
+                  {x: 6, y: 9},
+                  {x: 7, y: 6},
+                  {x: 8, y: 7},
+                  {x: 9, y: 1},
+                ],
+                style: {
+                  strokeStyle: "#111111",
+                  fillStyle: "#111111",
+                  lineWidth: 3,
+                  isFull: true,
+                  fullFillStyle: '#111111',
+                  fullOpacity: 0.5
+                }
+              },
+              {
+                data: [
+                  {x: 0, y: 0},
+                  {x: 1, y: 1},
+                  {x: 2, y: 1},
+                  {x: 3, y: 3},
+                  {x: 4, y: 3},
+                  {x: 5, y: 2},
+                  {x: 6, y: 2},
+                  {x: 7, y: 4},
+                  {x: 8, y: 4},
+                  {x: 9, y: 6},
+                ],
+                style: {
+                  strokeStyle: "#333399",
+                  fillStyle: "#333399",
+                  lineWidth: 3,
+                  isFull: true,
+                  fullFillStyle: '#333399',
+                  fullOpacity: 0.5
+                }
+              }
+            ],
+            isAnimate: true,
+          },
+          xAxis: {
+            gap: 10,
+            style: {
+              // strokeStyle: "#ffffff",
+              // fillStyle: "#ffffff",
+              strokeStyle: "#111111",
+              fillStyle: "#111111",
+              font: '14px Noto Sans KR',
+              lineWidth: 1,
+              drawLine: true,
+            }
+          },
+          yAxis: {
+            gap: 10,
+            style: {
+              // strokeStyle: "#ffffff",
+              // fillStyle: "#ffffff",
+              strokeStyle: "#111111",
+              fillStyle: "#111111",
+              font: '14px Noto Sans KR',
+              lineWidth: 1,
+              drawLine: true
+            }
           }
         }
       }
     )
   );
+
+  const imageChart = document.getElementById('imageChart');
+  var image = new Image()
+  image.src = "minky.jpg"
+
+  image.onload = () => {
+    new BaseChart(
+      imageChart,
+      new BaseConfig(
+        {
+          type: "test",
+          width: 600,
+          height: 250,
+          graph: {
+            background: {
+              isActvie: true,
+              fillStyle: "#1111111",
+              opacity: 0.5,
+              isImage: true,
+              image: image,
+            },
+            line: {
+              datasets: [
+                {
+                  data: [
+                    {x: 0, y: 0},
+                    {x: 1, y: 1},
+                    {x: 2, y: 2},
+                    {x: 3, y: 6},
+                    {x: 4, y: 4},
+                    {x: 5, y: 4},
+                    {x: 6, y: 6},
+                    {x: 7, y: 7},
+                    {x: 8, y: 1},
+                    {x: 9, y: 3},
+                  ],
+                  style: {
+                    strokeStyle: "#FF33FF",
+                    fillStyle: "#FF33FF",
+                    lineWidth: 3,
+                    isFull: true,
+                    fullFillStyle: '#FF33FF',
+                    fullOpacity: 0.5
+                  }
+                },
+                {
+                  data: [
+                    {x: 0, y: 0},
+                    {x: 1, y: 3},
+                    {x: 2, y: 3},
+                    {x: 3, y: 2},
+                    {x: 4, y: 2},
+                    {x: 5, y: 3},
+                    {x: 6, y: 9},
+                    {x: 7, y: 6},
+                    {x: 8, y: 7},
+                    {x: 9, y: 1},
+                  ],
+                  style: {
+                    strokeStyle: "#111111",
+                    fillStyle: "#111111",
+                    lineWidth: 3,
+                    isFull: true,
+                    fullFillStyle: '#111111',
+                    fullOpacity: 0.5
+                  }
+                },
+                {
+                  data: [
+                    {x: 0, y: 0},
+                    {x: 1, y: 1},
+                    {x: 2, y: 1},
+                    {x: 3, y: 3},
+                    {x: 4, y: 3},
+                    {x: 5, y: 2},
+                    {x: 6, y: 2},
+                    {x: 7, y: 4},
+                    {x: 8, y: 4},
+                    {x: 9, y: 6},
+                  ],
+                  style: {
+                    strokeStyle: "#333399",
+                    fillStyle: "#333399",
+                    lineWidth: 3,
+                    isFull: true,
+                    fullFillStyle: '#333399',
+                    fullOpacity: 0.5
+                  }
+                }
+              ],
+              isAnimate: true,
+            },
+            xAxis: {
+              gap: 10,
+              style: {
+                // strokeStyle: "#ffffff",
+                // fillStyle: "#ffffff",
+                strokeStyle: "#111111",
+                fillStyle: "#111111",
+                font: '14px Noto Sans KR',
+                lineWidth: 1,
+                drawLine: true,
+              }
+            },
+            yAxis: {
+              gap: 10,
+              style: {
+                // strokeStyle: "#ffffff",
+                // fillStyle: "#ffffff",
+                strokeStyle: "#111111",
+                fillStyle: "#111111",
+                font: '14px Noto Sans KR',
+                lineWidth: 1,
+                drawLine: true
+              }
+            }
+          }
+        }
+      )
+    );
+  }
 </script>

@@ -1,36 +1,53 @@
-import {HorizontalStyleConfig, VerticalStyleConfig, LineStyleConfig, BackgroundStyleConfig} from '../config'
-import {HorizontalStyle, VerticalStyle, LineStyle, BackgroundStyle} from '../type'
-
-interface GraphData {
-  x: number,
-  y: number
-}
+import { HorizontalStyleConfig, VerticalStyleConfig, BackgroundStyleConfig, DataFlowConfig, LineStyleConfig } from '../config'
+import { HorizontalStyle, VerticalStyle, BackgroundStyle, DataFlow } from '../type'
 
 interface Options {
-  xAxisOption: XAxisOption,
-  yAxisOption: YAxisOption,
-  lineOption?: LineStyle,
-  backgroundOption?: BackgroundStyle,
-  width: number,
-  height: number
+  type: string;
+  width?: number;
+  height?: number;
+  graph: {
+    xAxis: {
+      gap?: number;
+      style?: VerticalStyle;
+    };
+    yAxis: {
+      gap?: number;
+      style?: HorizontalStyle;
+    };
+    background?: BackgroundStyle;
+    line: {
+      datasets: DataFlow[]
+      isAnimate?: boolean;
+    };
+  }
 }
 
-interface XAxisOption {
-  space: number
-  style?: VerticalStyle
-}
-
-interface YAxisOption {
-  space: number
-  style?: HorizontalStyle
-}
+const DEFAULT_ANIMATION = false;
+const DEFAULT_WIDTH = 300;
+const DEFAULT_HEIGHT = 200;
+const DEFAULT_X_AXIS_GAP = 5;
+const DEFAULT_Y_AXIS_GAP = 5;
 
 class BaseConfig {
   type: string;
-  width: number;
-  height: number;
-  xAxisData: number[];
-  yAxisData: number[];
+  width: number = DEFAULT_WIDTH;
+  height: number = DEFAULT_HEIGHT;
+  xAxisGap: number = DEFAULT_X_AXIS_GAP;
+  yAxisGap: number = DEFAULT_Y_AXIS_GAP;
+
+  // Animation Flag
+  isAnimate: boolean = DEFAULT_ANIMATION;
+
+  // Style Option
+  horizontalConfig: HorizontalStyleConfig;
+  verticalConfig: VerticalStyleConfig;
+  backgroundConfig: BackgroundStyleConfig;
+  lineConfigList: LineStyleConfig[];
+
+  // Data Option
+  dataFlowConfig: DataFlowConfig;
+
+  // After Data Settings
   maxXAxis: number;
   minXAxis: number;
   maxYAxis: number;
@@ -39,37 +56,36 @@ class BaseConfig {
   yAxisUnit: number;
   totalXWidth: number;
   totalYHeight: number;
-  xAxisOption: XAxisOption;
-  yAxisOption: YAxisOption;
 
-  // Style Option
-  horizontalConfig: HorizontalStyleConfig;
-  verticalConfig: VerticalStyleConfig;
-  lineConfig: LineStyleConfig;
-  backgroundConfig: BackgroundStyleConfig;
+  constructor(options: Options) {
+    this.type = options.type;
+    this.width = options.width ?? DEFAULT_WIDTH
+    this.height = options.height ?? DEFAULT_HEIGHT
+    this.xAxisGap = options.graph.xAxis.gap ?? DEFAULT_X_AXIS_GAP
+    this.yAxisGap = options.graph.yAxis.gap ?? DEFAULT_Y_AXIS_GAP
 
-  constructor(type: string, data: GraphData[], options: Options) {
-    this.type = type;
-    this.width = options.width
-    this.height = options.height
-    this.xAxisData = data.map((value: GraphData) : number => value.x);
-    this.yAxisData = data.map((value: GraphData) : number => value.y);
-    this.maxXAxis = this.getXAxisMaxValue()
-    this.minXAxis = this.getXAxisMinValue()
-    this.maxYAxis = this.getYAxisMaxValue()
-    this.minYAxis = this.getYAxisMinValue()
-    this.xAxisOption = options.xAxisOption
-    this.yAxisOption = options.yAxisOption
+    // animation setting
+    this.isAnimate = options.graph.line.isAnimate ?? DEFAULT_ANIMATION
+
+    // style config
+    this.horizontalConfig = new HorizontalStyleConfig(options.graph.yAxis.style)
+    this.verticalConfig = new VerticalStyleConfig(options.graph.xAxis.style)
+    this.backgroundConfig = new BackgroundStyleConfig(options.graph.background)
+    this.lineConfigList = options.graph.line.datasets.map((value: DataFlow) : LineStyleConfig => new LineStyleConfig(value.style));
+    
+    // data flow config
+    this.dataFlowConfig = new DataFlowConfig(options.graph.line.datasets)
+
+    // data setting
+    this.maxXAxis = this.dataFlowConfig.getXAxisMaxValue()
+    this.minXAxis = this.dataFlowConfig.getXAxisMinValue()
+    this.maxYAxis = this.dataFlowConfig.getYAxisMaxValue()
+    this.minYAxis = this.dataFlowConfig.getYAxisMinValue()
+
     this.totalXWidth = this.maxXAxis - this.minXAxis
     this.totalYHeight =this.maxYAxis - this.minYAxis
     this.yAxisUnit = this.buildYAxisUnit()
     this.xAxisUnit = this.buildXAxisUnit()
-
-    // style config
-    this.horizontalConfig = new HorizontalStyleConfig(options.yAxisOption.style)
-    this.verticalConfig = new VerticalStyleConfig(options.xAxisOption.style)
-    this.lineConfig = new LineStyleConfig(options.lineOption)
-    this.backgroundConfig = new BackgroundStyleConfig(options.backgroundOption)
   }
 
   /**
@@ -77,7 +93,7 @@ class BaseConfig {
    */
   buildXAxisUnit(): number {
     let totalWidth = this.maxXAxis - this.minXAxis;
-    return Math.ceil(totalWidth / (this.xAxisOption.space - 1))
+    return Math.ceil(totalWidth / (this.xAxisGap - 1))
   }
 
   /**
@@ -85,23 +101,7 @@ class BaseConfig {
    */
   buildYAxisUnit(): number {
     let totalHeight = this.maxYAxis - this.minYAxis;
-    return Math.ceil(totalHeight / (this.yAxisOption.space - 1))
-  }
-
-  getXAxisMaxValue(): number {
-    return Math.max(...this.xAxisData)
-  }
-
-  getXAxisMinValue(): number {
-    return Math.min(...this.xAxisData)
-  }
-
-  getYAxisMaxValue(): number {
-    return Math.max(...this.yAxisData)
-  }
-
-  getYAxisMinValue(): number {
-    return Math.min(...this.yAxisData)
+    return Math.ceil(totalHeight / (this.yAxisGap - 1))
   }
 }
 

@@ -6,5 +6,4 @@ export interface LineStyle {
   isFull?: boolean;
   fullFillStyle?: string;
   fullOpacity?: number;
-  enableAnimation?: boolean;
 }

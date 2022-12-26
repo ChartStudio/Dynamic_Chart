@@ -1,11 +1,11 @@
 class Animate {
-  static animationId: number | null = null;
+  private animationId: number | null = null;
 
-  static start(animation: FrameRequestCallback) {
+  start(animation: FrameRequestCallback) {
     this.animationId = window.requestAnimationFrame(animation)
   }
 
-  static stop() {
+  stop() {
     if (this.animationId !== null) {
       window.cancelAnimationFrame(this.animationId)
     }

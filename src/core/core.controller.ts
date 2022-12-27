@@ -78,7 +78,7 @@ class BaseChart {
    * generate chart
    */
   loadScreen() {
-    if (this.styler.isActivaAnimation()) {
+    if (this.styler.isActiveAnimation()) {
       this.animation.drawLineAnimation(1, this.position.getAnimationEndCondition(), () => {
         this.init()
       })
@@ -124,7 +124,7 @@ class BaseChart {
    * load event
    */
   loadEvent() {
-    if (this.styler.isActivaPointEvent()) {
+    if (this.styler.isActivePointEvent()) {
       this.pointHoverEvent()
     }
   }

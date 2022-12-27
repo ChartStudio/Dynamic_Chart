@@ -6,7 +6,7 @@ import { FrameUtil, Frame } from '../util';
 interface LineDrawPixels {
   line: BasePixel[];
   full: FullLineDrawPixel
-  lineStyle: LineStyleConfig
+  style: LineStyleConfig
 }
 
 interface BasePixel {
@@ -18,6 +18,18 @@ interface FullLineDrawPixel {
   x: number,
   y: number,
   nextX: number
+}
+
+interface AnimationDrawPixels {
+  line: AnimationPixel[];
+  full: FullLineDrawPixel
+  style: LineStyleConfig
+}
+
+interface AnimationPixel {
+  x: number,
+  y: number,
+  isDot: boolean
 }
 
 interface AxisDrawPixel {
@@ -34,10 +46,15 @@ interface AxisDrawPixel {
   }
 }
 
+interface FindPointIndex {
+  lineIndex: number;
+  index: number;
+}
+
 const DEFAULT_X_AXIS_PADDING = 20;
 const DEFAULT_Y_AXIS_PADDING = 20;
-const DEFAULT_X_AXIS_MARGIN = 10;
-const DEFAULT_Y_AXIS_MARGIN = 10;
+const DEFAULT_X_AXIS_MARGIN = 20;
+const DEFAULT_Y_AXIS_MARGIN = 20;
 
 class Position {
   private width: number;
@@ -172,38 +189,7 @@ class Position {
       return {
         line: this.getLineDrawPixel(value),
         full: this.getFullLineDrawPixel(),
-        lineStyle: this.dataFlowConfig.lineConfigList[index]
-      }
-    })
-  }
-
-  getLineDrawPixelsForAnimation(): LineDrawPixels[] {
-    if (this.requireFrameUp()) {
-      return this.getLineDrawPixelsWithFrameUp()
-    }
-    return this.getLineDrawPixels()
-  }
-
-  private getLineDrawPixelsWithFrameUp(): LineDrawPixels[] {
-    return this.dataFlowConfig.graphDataList.map((value: GraphData[], index: number) : LineDrawPixels => {
-      let frameList: Frame[] = FrameUtil.buildFrameList(
-        value.map((value: GraphData): number => value.x), 
-        value.map((value: GraphData): number => value.y)
-      )
-
-      let frameUpList: Frame[] = FrameUtil.frameUp(frameList)
-
-      let frameUpPixel: GraphData[] = frameUpList.map((value: Frame) => {
-        return {
-          x: value.x,
-          y: value.y
-        }
-      })
-      
-      return {
-        line: this.getLineDrawPixel(frameUpPixel),
-        full: this.getFullLineDrawPixel(),
-        lineStyle: this.dataFlowConfig.lineConfigList[index]
+        style: this.dataFlowConfig.lineConfigList[index]
       }
     })
   }
@@ -225,12 +211,79 @@ class Position {
     }
   }
 
+  getLineDrawPixelsForAnimation(): AnimationDrawPixels[] {
+    if (this.requireFrameUp()) {
+      return this.getLineDrawAnimationPixelsWithFrameUp()
+    }
+    return this.getLineDrawAnimationPixels()
+  }
+
+  private getLineDrawAnimationPixels(): AnimationDrawPixels[] {
+    return this.dataFlowConfig.graphDataList.map((value: GraphData[], index: number) : AnimationDrawPixels => {
+      let frameList: Frame[] = FrameUtil.buildFrameList(
+        value.map((value: GraphData): number => value.x), 
+        value.map((value: GraphData): number => value.y)
+      )
+      
+      return {
+        line: this.getAnimationPixel(frameList),
+        full: this.getFullLineDrawPixel(),
+        style: this.dataFlowConfig.lineConfigList[index]
+      }
+    })
+  }
+
+  private getLineDrawAnimationPixelsWithFrameUp(): AnimationDrawPixels[] {
+    return this.dataFlowConfig.graphDataList.map((value: GraphData[], index: number) : AnimationDrawPixels => {
+      let frameList: Frame[] = FrameUtil.buildFrameList(
+        value.map((value: GraphData): number => value.x), 
+        value.map((value: GraphData): number => value.y)
+      )
+
+      let frameUpList: Frame[] = FrameUtil.frameUp(frameList)
+      
+      return {
+        line: this.getAnimationPixel(frameUpList),
+        full: this.getFullLineDrawPixel(),
+        style: this.dataFlowConfig.lineConfigList[index]
+      }
+    })
+  }
+
+  private getAnimationPixel(frameList: Frame[]): AnimationPixel[] {
+    return frameList.map((value: Frame) : AnimationPixel => {
+      return {
+        x: (this.getXAxisDataPixel(value.x) + this.baseXAxisPadding), 
+        y: (this.getYAxisDataPixel(value.y) - this.baseYAxisPadding),
+        isDot: value.isDot
+      }
+    })
+  }
+
   getXAxisDataPixel(value: number): number {
     return (((this.width - this.baseXAxisPadding - this.baseXAxisMargin) / (this.xAxisUnit * (this.xAxisGap - 1))) * (value - this.minXAxis));
   }
 
   getYAxisDataPixel(value: number): number {
     return (this.height - ((this.height - this.baseYAxisPadding - this.baseYAxisMargin) / (this.yAxisUnit * (this.yAxisGap - 1))) * (value - this.minYAxis));
+  }
+
+  isPixelInDotPoint(x: number, y: number, fixedSize: number): FindPointIndex {
+    for (let i = 0; i < this.dataFlowConfig.graphDataList.length; i++) {
+      let line = this.dataFlowConfig.graphDataList[i];
+      let style = this.dataFlowConfig.lineConfigList[i];
+      let r = style.pointRadius + fixedSize
+
+      for (let j = 0; j < line.length; j++) {
+        let a = this.getXAxisDataPixel(line[j].x) + this.baseXAxisPadding
+        let b = this.getYAxisDataPixel(line[j].y) - this.baseYAxisPadding
+        let condition = ((x - a) * (x - a)) + ((y - b) * (y - b))
+        if (condition < (r * r)) {
+          return {lineIndex: i, index: j}
+        }
+      }
+    }
+    return {lineIndex: -1, index: -1}
   }
 }
 

@@ -1,9 +1,23 @@
 export interface LineStyle {
-  strokeStyle?: string;
-  fillStyle?: string;
-  lineCap?: string;
-  lineWidth?: number;
+  isLine?: boolean;
+  line?: {
+    strokeStyle?: string;
+    fillStyle?: string;
+    cap?: string;
+    width?: number;
+  }
   isFull?: boolean;
-  fullFillStyle?: string;
-  fullOpacity?: number;
+  full?: {
+    fillStyle?: string;
+    opacity?: number;
+  }
+  isPoint?: boolean;
+  point?: {
+    type?: string;
+    radius?: number;
+    strokeStyle?: string;
+    width?: number;
+    fillStyle?: string;
+    opacity?: number;
+  }
 }

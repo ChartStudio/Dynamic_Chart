@@ -1,3 +1,8 @@
+interface MousePoint {
+  x: number;
+  y: number;
+}
+
 class EventListener {
   private canvas: HTMLCanvasElement;
 
@@ -5,20 +10,36 @@ class EventListener {
     this.canvas = canvas;
   }
 
-  mouseMoveEvent(handler: Function) {
-    this.canvas.addEventListener("mousemove", (e) => handler(this.canvas, e))
+  mouseMoveEvent<T>(handler: Function, helper: T) {
+    this.canvas.addEventListener("mousemove", (e) => {
+      let mouseMove = this.getEventLocation(e)
+      return handler(mouseMove.x, mouseMove.y, helper, e)
+    })
   }
 
-  mouseDownEvent(handler: Function) {
-    this.canvas.addEventListener("mousedown", (e) => handler(this.canvas, e))
+  mouseDownEvent<T>(handler: Function, helper: T) {
+    this.canvas.addEventListener("mousedown", (e) => {
+      let mouseMove = this.getEventLocation(e)
+      return handler(mouseMove.x, mouseMove.y, helper, e)
+    })
   }
 
-  mouseUpEvent(handler: Function) {
-    this.canvas.addEventListener("mouseup", (e) => handler(this.canvas, e))
+  mouseUpEvent<T>(handler: Function, helper: T) {
+    this.canvas.addEventListener("mouseup", (e) => {
+      let mouseMove = this.getEventLocation(e)
+      return handler(mouseMove.x, mouseMove.y, helper, e)
+    })
   }
 
-  mouseLeaveEvent(handler: Function) {
-    this.canvas.addEventListener("mouseleave", (e) => handler(this.canvas, e))
+  mouseLeaveEvent<T>(handler: Function, helper: T) {
+    this.canvas.addEventListener("mouseleave", (e) => handler(e, helper))
+  }
+
+  private getEventLocation(event: MouseEvent): MousePoint {
+    let rect = this.canvas.getBoundingClientRect();
+    let x = event.clientX - rect.left;
+    let y = event.clientY - rect.top;
+    return {x: x, y: y}
   }
 }
 

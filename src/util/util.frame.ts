@@ -1,6 +1,7 @@
 export interface Frame {
   x: number;
   y: number;
+  isDot: boolean;
 }
 
 class FrameUtil {
@@ -10,7 +11,7 @@ class FrameUtil {
     for (let i = 0; i < xList.length; i++) {
       let x = xList[i];
       let y = yList[i];
-      frameList.push({ x:x , y:y });
+      frameList.push({x: x, y: y, isDot: true});
     }
 
     return frameList
@@ -29,9 +30,10 @@ class FrameUtil {
       let dy = pt1Y - pt0Y;
 
       for (var j = 0; j < 10; j++) {
+        let isDot = (j === 0)
         let x = pt0X + dx * j / 10;
         let y = pt0Y + dy * j / 10;
-        frameUpList.push({ x:x , y:y });
+        frameUpList.push({x: x, y: y, isDot: isDot});
       }
     }
     return frameUpList

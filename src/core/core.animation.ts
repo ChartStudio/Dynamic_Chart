@@ -20,6 +20,7 @@ class Animation {
     const animate = () => {
       this.graphView.refreshCanvas()
       this.graphView.drawBackground()
+      this.graphView.drawCanvasTitle()
       this.graphView.drawYAxis()
       this.graphView.drawXAxis()
       this.graphView.drawLinesToFixedPosition(nextEndCondition)
@@ -43,6 +44,7 @@ class Animation {
     const animate = () => {
       this.graphView.refreshCanvas()
       this.graphView.drawBackground()
+      this.graphView.drawCanvasTitle()
       this.graphView.drawYAxis()
       this.graphView.drawXAxis()
       this.graphView.drawLinesToFixedSize(lineIndex, index, nextSize)
@@ -65,6 +67,7 @@ class Animation {
     const animate = () => {
       this.graphView.refreshCanvas()
       this.graphView.drawBackground()
+      this.graphView.drawCanvasTitle()
       this.graphView.drawYAxis()
       this.graphView.drawXAxis()
       this.graphView.drawLinesToFixedSize(lineIndex, index, nextSize)

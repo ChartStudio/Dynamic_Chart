@@ -37,6 +37,11 @@ class GraphView {
     }
   }
 
+  drawCanvasTitle(){
+    let pixel = this.position.getRectPixel();
+    this.context?.fillText(this.styler.getGraphTitle(),  pixel.x/2, 20)
+  }
+
   private drawBackgroundWithCanvas() {
     let pixel = this.position.getRectPixel()
     this.styler.setBackgroundStyle()

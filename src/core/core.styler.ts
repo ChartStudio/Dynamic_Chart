@@ -4,6 +4,7 @@ import BaseConfig from "./core.config"
 
 class Styler {
   private context: CanvasRenderingContext2D | null;
+  private title : string;
   private horizontalConfig: HorizontalStyleConfig;
   private verticalConfig: VerticalStyleConfig;
   private backgroundConfig: BackgroundStyleConfig;
@@ -12,6 +13,7 @@ class Styler {
 
   constructor(context: CanvasRenderingContext2D | null, config: BaseConfig) {
     this.context = context;
+    this.title = config.title;
     this.horizontalConfig = config.horizontalConfig;
     this.verticalConfig = config.verticalConfig;
     this.backgroundConfig = config.backgroundConfig;
@@ -37,6 +39,10 @@ class Styler {
 
   getBackgroundImage(): HTMLImageElement {
     return this.backgroundConfig.image
+  }
+
+  getGraphTitle(): string {
+    return this.title
   }
 
   setHorizontalStyle() {

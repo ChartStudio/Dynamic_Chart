@@ -9,7 +9,7 @@
 
 <script type="module">
   import {BaseChart, BaseConfig} from "../../dist/esm/index.js"
-  
+
   const simpleChart = document.getElementById('simpleChart');
 
   new BaseChart(
@@ -19,6 +19,7 @@
         type: "test",
         width: 600,
         height: 400,
+        title:"Dynamic Graph Title",
         graph: {
           background: {
             isActvie: false,

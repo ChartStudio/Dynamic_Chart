@@ -118,7 +118,7 @@ class Position {
   getRectPixel(): BasePixel {
     return {
       x: this.width,
-      y: this.height
+      y: this.height,
     }
   }
 

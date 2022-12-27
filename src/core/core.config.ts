@@ -3,6 +3,7 @@ import { HorizontalStyle, VerticalStyle, BackgroundStyle, DataFlow } from '../ty
 
 interface Options {
   type: string;
+  title: string;
   width?: number;
   height?: number;
   graph: {
@@ -32,6 +33,7 @@ const DEFAULT_Y_AXIS_GAP = 5;
 
 class BaseConfig {
   type: string;
+  title:string;
   width: number = DEFAULT_WIDTH;
   height: number = DEFAULT_HEIGHT;
   xAxisGap: number = DEFAULT_X_AXIS_GAP;
@@ -63,6 +65,7 @@ class BaseConfig {
 
   constructor(options: Options) {
     this.type = options.type;
+    this.title = options.title;
     this.width = options.width ?? DEFAULT_WIDTH
     this.height = options.height ?? DEFAULT_HEIGHT
     this.xAxisGap = options.graph.xAxis.gap ?? DEFAULT_X_AXIS_GAP

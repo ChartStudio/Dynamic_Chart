@@ -56,18 +56,20 @@ class BaseChart {
     // event object
     this.event = new EventListener(this.canvas)
 
+
     // loading Screen
     this.loadScreen()
     // loading Event
     this.loadEvent()
+
   }
 
   /**
    * base setting canvas
    */
   area(config: BaseConfig) {
-    this.canvas.style.width = config.width + 'px';
-    this.canvas.style.height = config.height + 'px';
+    this.canvas.style.width = config.width+ 100 + 'px';
+    this.canvas.style.height = config.height + 100 + 'px';
     this.canvas.width = this.canvas.offsetWidth;
     this.canvas.height = this.canvas.offsetHeight;
   }
@@ -76,7 +78,7 @@ class BaseChart {
    * generate chart
    */
   loadScreen() {
-    if (this.styler.isActivaAnimation() === true) {
+    if (this.styler.isActivaAnimation()) {
       this.animation.drawLineAnimation(1, this.position.getAnimationEndCondition(), () => {
         this.init()
       })
@@ -88,9 +90,14 @@ class BaseChart {
   private init() {
     this.refresh()
     this.background()
+    this.setTitle()
     this.yAxis()
     this.xAxis()
     this.line()
+  }
+
+  private setTitle(){
+    this.graphView.drawCanvasTitle();
   }
 
   private refresh() {

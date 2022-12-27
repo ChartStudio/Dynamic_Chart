@@ -21,11 +21,11 @@ class Styler {
     this.isPointEvent = config.isPointEvent;
   }
   
-  isActivaPointEvent(): boolean {
+  isActivePointEvent(): boolean {
     return this.isPointEvent
   }
 
-  isActivaAnimation(): boolean {
+  isActiveAnimation(): boolean {
     return this.isAnimate
   }
 

@@ -1,3 +1,4 @@
+import { LineStyleConfig } from '../config'
 import Styler from '../core/core.styler'
 import Position from '../core/core.position'
 
@@ -88,32 +89,79 @@ class GraphView {
     this.context?.closePath();
   }
 
-  drawLine() {
+  drawLines() {
     let pixelList = this.position.getLineDrawPixels()
 
-    pixelList.forEach(({line, full, lineStyle}) => {
-      this.styler.setLineStyle(lineStyle)
-      line.forEach((pixel, index) => {
-        if (index === 0) {
-          this.context?.beginPath();
-          this.context?.moveTo(pixel.x, pixel.y);
-        } else {
-          this.context?.lineTo(pixel.x, pixel.y);
-        }
+    for (let i = 0; i < pixelList.length; i++) {
+      let line = pixelList[i].line;
+      let style = pixelList[i].style;
+      let full = pixelList[i].full;
 
-        if (index === line.length - 1) {
-          this.context?.stroke();
-          if (lineStyle.isFull === true) {
-            this.styler.setDetailFillStyle(lineStyle.fullFillStyle, lineStyle.fullOpacity)
-            this.drawLineWithFullOver(full.x, full.nextX, full.y)
-          }
-          this.context?.closePath();
-        }
-      })
-    })
+      this.styler.setLineStyle(style);
+
+      this.context?.beginPath();
+      this.context?.moveTo(line[0].x, line[0].y);
+
+      for (let j = 1; j < line.length; j++) {        
+        this.drawLine(line[j].x, line[j].y, style)
+      }
+
+      this.context?.stroke();
+      this.drawLineWithFullOver(full.x, full.nextX, full.y, style);
+      this.context?.closePath();
+
+      for (let j = 0; j < line.length; j++) {
+        this.drawPoint(line[j].x, line[j].y, style)
+      }
+    }
   }
 
-  private drawLineWithFullOver(x: number, nextX: number, y: number) {
+  private drawLine(x: number, y: number, style: LineStyleConfig) {
+    this.styler.setLineStyle(style)
+
+    if (style.isLine === true) {
+      this.context?.lineTo(x, y);
+    } else {
+      this.context?.moveTo(x, y);
+    }
+  }
+
+  private drawPoint(x: number, y: number, style: LineStyleConfig) {
+    if (style.isPoint === false) {
+      return;
+    }
+
+    switch(style.pointType) {
+      case "dot":
+        this.drawDotPoint(x, y, style);
+      default:
+        break;
+    }
+  }
+
+  private drawDotPoint(x: number, y: number, style: LineStyleConfig) {
+    let radius = style.pointRadius
+    let startAngle = 0
+    let endAngle = Math.PI * 2 // 360
+    let counterClockWise = true // 반시계 방향 여부
+    this.context?.beginPath();
+    
+    this.styler.setDetailFillStyle(style.pointFillStyle, style.pointOpacity)
+    this.context?.arc(x, y, radius, startAngle, endAngle, counterClockWise);
+    this.context?.fill()
+
+    this.styler.setDetailStrokeStyle(style.pointStrokeStyle, style.pointLineWidth);
+    this.context?.stroke()
+    this.context?.closePath();
+  }
+
+  private drawLineWithFullOver(x: number, nextX: number, y: number, style: LineStyleConfig) {
+    if (style.isFull === false) {
+      return;
+    }
+
+    this.styler.setDetailFillStyle(style.fullFillStyle, style.fullOpacity)
+    
     this.context?.lineTo(x, y);
     this.context?.lineTo(nextX, y);
     this.context!.globalCompositeOperation = 'destination-over';
@@ -121,34 +169,93 @@ class GraphView {
     this.context!.globalCompositeOperation = 'source-over';
   }
 
-  drawLineToFixedPosition(fixedPosition: number) {
+  drawLinesToFixedPosition(fixedPosition: number) {
     let pixelList = this.position.getLineDrawPixelsForAnimation()
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
-      let lineStyle = pixelList[i].lineStyle;
+      let style = pixelList[i].style;
       let full = pixelList[i].full;
-
-      this.styler.setLineStyle(lineStyle);
 
       this.context?.beginPath();
       this.context?.moveTo(line[0].x, line[0].y);
 
       for (let j = 1; j < fixedPosition; j++) {
-        this.context?.save();
-        this.context?.lineTo(line[j].x, line[j].y);
-        this.context?.restore();
+        this.drawLine(line[j].x, line[j].y, style)
+      }
+
+      let endIndexPixel = line[fixedPosition - 1]
+
+      this.context?.stroke();
+      this.drawLineWithFullOver(endIndexPixel.x, full.nextX, full.y, style);
+      this.context?.closePath();
+
+      for (let j = 0; j < fixedPosition; j++) {
+        if (line[j].isDot === true) {
+          this.drawPoint(line[j].x, line[j].y, style)
+        }
+      }
+    }
+  }
+
+  drawLinesToFixedSize(lineIndex: number, index: number, fixedSize: number) {
+    let pixelList = this.position.getLineDrawPixels()
+
+    for (let i = 0; i < pixelList.length; i++) {
+      let line = pixelList[i].line;
+      let style = pixelList[i].style;
+      let full = pixelList[i].full;
+
+      this.styler.setLineStyle(style);
+
+      this.context?.beginPath();
+      this.context?.moveTo(line[0].x, line[0].y);
+
+      for (let j = 1; j < line.length; j++) {        
+        this.drawLine(line[j].x, line[j].y, style)
       }
 
       this.context?.stroke();
-      if (lineStyle.isFull === true) {
-        let endIndexPixel = line[fixedPosition - 1]
-
-        this.styler.setDetailFillStyle(lineStyle.fullFillStyle, lineStyle.fullOpacity);
-        this.drawLineWithFullOver(endIndexPixel.x, full.nextX, full.y);
-      }
+      this.drawLineWithFullOver(full.x, full.nextX, full.y, style);
       this.context?.closePath();
+
+      for (let j = 0; j < line.length; j++) {
+        if (i === lineIndex && j === index) {
+          this.drawPointToFixedSize(line[j].x, line[j].y, fixedSize, style)
+        } else {
+          this.drawDotPoint(line[j].x, line[j].y, style)
+        }
+      }
     }
+  }
+
+  private drawPointToFixedSize(x: number, y: number, fixedSize: number, style: LineStyleConfig) {
+    if (style.isPoint === false) {
+      return;
+    }
+
+    switch(style.pointType) {
+      case "dot":
+        this.drawDotPointToFixedSize(x, y, fixedSize, style);
+      default:
+        break;
+    }
+  }
+
+  private drawDotPointToFixedSize(x: number, y: number, fixedSize: number, style: LineStyleConfig) {
+    let radius = style.pointRadius + fixedSize
+    let startAngle = 0
+    let endAngle = Math.PI * 2 // 360
+    let counterClockWise = true // 반시계 방향 여부
+    this.context?.beginPath();
+    
+    this.styler.setDetailFillStyle(style.pointFillStyle, style.pointOpacity)
+    this.context?.arc(x, y, radius, startAngle, endAngle, counterClockWise);
+    this.context?.fill()
+
+    this.styler.setDetailStrokeStyle(style.pointStrokeStyle, style.pointLineWidth);
+    this.context?.stroke()
+    this.context?.closePath();
   }
 }
 

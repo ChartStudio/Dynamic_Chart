@@ -18,11 +18,13 @@ interface Options {
     line: {
       datasets: DataFlow[]
       isAnimate?: boolean;
+      isPointEvent?: boolean;
     };
   }
 }
 
 const DEFAULT_ANIMATION = false;
+const DEFAULT_POINT_EVENT = true;
 const DEFAULT_WIDTH = 300;
 const DEFAULT_HEIGHT = 200;
 const DEFAULT_X_AXIS_GAP = 5;
@@ -37,6 +39,8 @@ class BaseConfig {
 
   // Animation Flag
   isAnimate: boolean = DEFAULT_ANIMATION;
+  // Point Event Flag
+  isPointEvent: boolean = DEFAULT_POINT_EVENT;
 
   // Style Option
   horizontalConfig: HorizontalStyleConfig;
@@ -66,6 +70,8 @@ class BaseConfig {
 
     // animation setting
     this.isAnimate = options.graph.line.isAnimate ?? DEFAULT_ANIMATION
+    // point event setting
+    this.isPointEvent = options.graph.line.isPointEvent ?? DEFAULT_POINT_EVENT
 
     // style config
     this.horizontalConfig = new HorizontalStyleConfig(options.graph.yAxis.style)

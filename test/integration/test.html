@@ -18,7 +18,7 @@
       {
         type: "test",
         width: 600,
-        height: 250,
+        height: 400,
         graph: {
           background: {
             isActvie: false,
@@ -43,12 +43,26 @@
                   {x: 9, y: 3},
                 ],
                 style: {
-                  strokeStyle: "#FF33FF",
-                  fillStyle: "#FF33FF",
-                  lineWidth: 3,
-                  isFull: true,
-                  fullFillStyle: '#FF33FF',
-                  fullOpacity: 0.5
+                  isLine: true,
+                  isFull: false,
+                  isPoint: true,
+                  line: {
+                    strokeStyle: "#FF33FF",
+                    fillStyle: "#FF33FF",
+                    width: 3,
+                  },
+                  full: {
+                    fillStyle: '#FF33FF',
+                    opacity: 0.5
+                  },
+                  point: {
+                    type: "dot",
+                    radius: 10,
+                    strokeStyle: "#FF33FF",
+                    width: 1.5,
+                    fillStyle: '#FF33FF',
+                    opacity: 0.2
+                  }
                 }
               },
               {
@@ -65,12 +79,26 @@
                   {x: 9, y: 1},
                 ],
                 style: {
-                  strokeStyle: "#111111",
-                  fillStyle: "#111111",
-                  lineWidth: 3,
-                  isFull: true,
-                  fullFillStyle: '#111111',
-                  fullOpacity: 0.5
+                  isLine: true,
+                  isFull: false,
+                  isPoint: true,
+                  line: {
+                    strokeStyle: "#111111",
+                    fillStyle: "#111111",
+                    width: 2,
+                  },
+                  full: {
+                    fillStyle: '#111111',
+                    opacity: 0.5
+                  },
+                  point: {
+                    type: "dot",
+                    radius: 3,
+                    strokeStyle: "#111111",
+                    width: 1.5,
+                    fillStyle: '#111111',
+                    opacity: 0.2
+                  }
                 }
               },
               {
@@ -87,16 +115,31 @@
                   {x: 9, y: 6},
                 ],
                 style: {
-                  strokeStyle: "#333399",
-                  fillStyle: "#333399",
-                  lineWidth: 3,
-                  isFull: true,
-                  fullFillStyle: '#333399',
-                  fullOpacity: 0.5
+                  isLine: false,
+                  isFull: false,
+                  isPoint: true,
+                  line: {
+                    strokeStyle: "#333399",
+                    fillStyle: "#333399",
+                    width: 3,
+                  },
+                  full: {
+                    fillStyle: '#333399',
+                    opacity: 0.5
+                  },
+                  point: {
+                    type: "dot",
+                    radius: 5,
+                    strokeStyle: "#333399",
+                    width: 1.5,
+                    fillStyle: '#333399',
+                    opacity: 0.2
+                  }
                 }
               }
             ],
             isAnimate: true,
+            isPointEvent: true,
           },
           xAxis: {
             gap: 10,
@@ -138,7 +181,7 @@
         {
           type: "test",
           width: 600,
-          height: 250,
+          height: 400,
           graph: {
             background: {
               isActvie: true,
@@ -163,12 +206,26 @@
                     {x: 9, y: 3},
                   ],
                   style: {
-                    strokeStyle: "#FF33FF",
-                    fillStyle: "#FF33FF",
-                    lineWidth: 3,
-                    isFull: true,
-                    fullFillStyle: '#FF33FF',
-                    fullOpacity: 0.5
+                    isLine: true,
+                    isFull: false,
+                    isPoint: true,
+                    line: {
+                      strokeStyle: "#FF33FF",
+                      fillStyle: "#FF33FF",
+                      width: 3,
+                    },
+                    full: {
+                      fillStyle: '#FF33FF',
+                      opacity: 0.5
+                    },
+                    point: {
+                      type: "dot",
+                      radius: 10,
+                      strokeStyle: "#FF33FF",
+                      width: 1.5,
+                      fillStyle: '#FF33FF',
+                      opacity: 0.2
+                    }
                   }
                 },
                 {
@@ -185,12 +242,26 @@
                     {x: 9, y: 1},
                   ],
                   style: {
-                    strokeStyle: "#111111",
-                    fillStyle: "#111111",
-                    lineWidth: 3,
-                    isFull: true,
-                    fullFillStyle: '#111111',
-                    fullOpacity: 0.5
+                    isLine: true,
+                    isFull: false,
+                    isPoint: true,
+                    line: {
+                      strokeStyle: "#111111",
+                      fillStyle: "#111111",
+                      width: 2,
+                    },
+                    full: {
+                      fillStyle: '#111111',
+                      opacity: 0.5
+                    },
+                    point: {
+                      type: "dot",
+                      radius: 5,
+                      strokeStyle: "#111111",
+                      width: 1.5,
+                      fillStyle: '#111111',
+                      opacity: 0.2
+                    }
                   }
                 },
                 {
@@ -207,16 +278,31 @@
                     {x: 9, y: 6},
                   ],
                   style: {
-                    strokeStyle: "#333399",
-                    fillStyle: "#333399",
-                    lineWidth: 3,
-                    isFull: true,
-                    fullFillStyle: '#333399',
-                    fullOpacity: 0.5
+                    isLine: false,
+                    isFull: false,
+                    isPoint: true,
+                    line: {
+                      strokeStyle: "#333399",
+                      fillStyle: "#333399",
+                      width: 3,
+                    },
+                    full: {
+                      fillStyle: '#333399',
+                      opacity: 0.5
+                    },
+                    point: {
+                      type: "dot",
+                      radius: 5,
+                      strokeStyle: "#333399",
+                      width: 1.5,
+                      fillStyle: '#333399',
+                      opacity: 0.2
+                    }
                   }
                 }
               ],
               isAnimate: true,
+              isPointEvent: false,
             },
             xAxis: {
               gap: 10,

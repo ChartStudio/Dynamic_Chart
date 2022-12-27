@@ -8,6 +8,7 @@ class Styler {
   private verticalConfig: VerticalStyleConfig;
   private backgroundConfig: BackgroundStyleConfig;
   private isAnimate: boolean;
+  private isPointEvent: boolean;
 
   constructor(context: CanvasRenderingContext2D | null, config: BaseConfig) {
     this.context = context;
@@ -15,6 +16,11 @@ class Styler {
     this.verticalConfig = config.verticalConfig;
     this.backgroundConfig = config.backgroundConfig;
     this.isAnimate = config.isAnimate;
+    this.isPointEvent = config.isPointEvent;
+  }
+  
+  isActivaPointEvent(): boolean {
+    return this.isPointEvent
   }
 
   isActivaAnimation(): boolean {
@@ -65,6 +71,11 @@ class Styler {
   setDetailFillStyle(color: string, opacity: number) {
     let rgb = ColorUtil.hexToRgb(color)
     this.context!.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
+  }
+
+  setDetailStrokeStyle(strokeStyle: string, width: number) {
+    this.context!.strokeStyle = strokeStyle;
+    this.context!.lineWidth = width;
   }
 }
 

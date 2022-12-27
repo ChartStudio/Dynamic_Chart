@@ -3,8 +3,10 @@ import Styler from './core.styler'
 import Animation from "./core.animation";
 import EventListener from "./core.event.listener";
 import Position from "./core.position";
+
+// sub domain
 import { GraphView } from "../view";
-import { HoverListener } from "../listener";
+import { PointHoverHelper, pointMouseMoveListener, pointMouseLeaveListener } from "../listener";
 
 class BaseChart {
   private canvas: HTMLCanvasElement;
@@ -13,16 +15,23 @@ class BaseChart {
   private height: number;
   private config: BaseConfig;
 
+  /**
+   * Core Object
+   */
   // Postion Object
   private position: Position
   // Styler Object
   private styler: Styler
   // Event Listener Object
   private event: EventListener;
-  // Graph View Object
-  private graphView: GraphView;
   // Animation Object
   private animation: Animation;
+
+  /**
+   * View Object
+   */
+  // Graph View Object
+  private graphView: GraphView;
 
   constructor(canvas: HTMLCanvasElement, config: BaseConfig) {
     this.canvas = canvas;
@@ -35,16 +44,17 @@ class BaseChart {
     this.height = this.canvas.height;
     this.config = config;
 
+    
     // position object
     this.position = new Position(this.width, this.height, this.config)
     // styler object
     this.styler = new Styler(this.context, this.config)
     // graph view
     this.graphView = new GraphView(this.context, this.position, this.styler)
-    // event object
-    this.event = new EventListener(this.canvas)
     // animation object
     this.animation = new Animation(this.graphView)
+    // event object
+    this.event = new EventListener(this.canvas)
 
     // loading Screen
     this.loadScreen()
@@ -75,14 +85,7 @@ class BaseChart {
     }
   }
 
-   /**
-   * load event
-   */
-  loadEvent() {
-    this.event.mouseMoveEvent(HoverListener.basicHoverEvent)
-  }
-
-  init() {
+  private init() {
     this.refresh()
     this.background()
     this.yAxis()
@@ -107,7 +110,23 @@ class BaseChart {
   }
 
   private line() {
-    this.graphView.drawLine()
+    this.graphView.drawLines()
+  }
+
+  /**
+   * load event
+   */
+  loadEvent() {
+    if (this.styler.isActivaPointEvent()) {
+      this.pointHoverEvent()
+    }
+  }
+
+  private pointHoverEvent() {
+    let pointHoverHelper = new PointHoverHelper(this.position, this.animation)
+
+    this.event.mouseMoveEvent(pointMouseMoveListener, pointHoverHelper)
+    this.event.mouseLeaveEvent(pointMouseLeaveListener, pointHoverHelper)
   }
 }
 

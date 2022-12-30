@@ -90,13 +90,13 @@ class BaseChart {
   private init() {
     this.refresh()
     this.background()
-    this.setTitle()
+    this.title()
     this.yAxis()
     this.xAxis()
     this.line()
   }
 
-  private setTitle(){
+  private title(){
     this.graphView.drawCanvasTitle();
   }
 
@@ -131,7 +131,6 @@ class BaseChart {
 
   private pointHoverEvent() {
     let pointHoverHelper = new PointHoverHelper(this.position, this.animation)
-
     this.event.mouseMoveEvent(pointMouseMoveListener, pointHoverHelper)
     this.event.mouseLeaveEvent(pointMouseLeaveListener, pointHoverHelper)
   }

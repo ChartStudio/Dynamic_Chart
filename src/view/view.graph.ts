@@ -39,7 +39,7 @@ class GraphView {
 
   drawCanvasTitle(){
     let pixel = this.position.getRectPixel();
-    this.context?.fillText(this.styler.getGraphTitle(),  pixel.x/2, 20)
+    this.context?.fillText(this.styler.getChartTitle().getTitleContent(),  pixel.x / 2, 20)
   }
 
   private drawBackgroundWithCanvas() {

@@ -1,19 +1,26 @@
-import { HorizontalStyleConfig, VerticalStyleConfig, LineStyleConfig, BackgroundStyleConfig } from '../config'
+import {
+  HorizontalStyleConfig,
+  VerticalStyleConfig,
+  LineStyleConfig,
+  BackgroundStyleConfig,
+  ChartTitleConfig
+} from '../config'
 import { ColorUtil } from '../util' 
 import BaseConfig from "./core.config"
 
 class Styler {
   private context: CanvasRenderingContext2D | null;
-  private title : string;
+  private chart_title : ChartTitleConfig;
   private horizontalConfig: HorizontalStyleConfig;
   private verticalConfig: VerticalStyleConfig;
   private backgroundConfig: BackgroundStyleConfig;
   private isAnimate: boolean;
   private isPointEvent: boolean;
+  private title: string | undefined = undefined;
 
   constructor(context: CanvasRenderingContext2D | null, config: BaseConfig) {
     this.context = context;
-    this.title = config.title;
+    this.chart_title = config.chart_title
     this.horizontalConfig = config.horizontalConfig;
     this.verticalConfig = config.verticalConfig;
     this.backgroundConfig = config.backgroundConfig;
@@ -41,10 +48,9 @@ class Styler {
     return this.backgroundConfig.image
   }
 
-  getGraphTitle(): string {
-    return this.title
+  getChartTitle(){
+    return this.chart_title;
   }
-
   setHorizontalStyle() {
     this.context!.strokeStyle = this.horizontalConfig.strokeStyle;
     this.context!.fillStyle = this.horizontalConfig.fillStyle;

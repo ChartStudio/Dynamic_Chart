@@ -1,9 +1,16 @@
-import { HorizontalStyleConfig, VerticalStyleConfig, BackgroundStyleConfig, DataFlowConfig, LineStyleConfig } from '../config'
-import { HorizontalStyle, VerticalStyle, BackgroundStyle, DataFlow } from '../type'
+import {
+  HorizontalStyleConfig,
+  VerticalStyleConfig,
+  BackgroundStyleConfig,
+  DataFlowConfig,
+  LineStyleConfig,
+  ChartTitleConfig
+} from '../config'
+import {HorizontalStyle, VerticalStyle, BackgroundStyle, DataFlow, ChartTitle} from '../type'
 
 interface Options {
   type: string;
-  title: string;
+  chart_title: ChartTitle;
   width?: number;
   height?: number;
   graph: {
@@ -24,6 +31,11 @@ interface Options {
   }
 }
 
+
+
+
+
+
 const DEFAULT_ANIMATION = false;
 const DEFAULT_POINT_EVENT = true;
 const DEFAULT_WIDTH = 300;
@@ -31,9 +43,15 @@ const DEFAULT_HEIGHT = 200;
 const DEFAULT_X_AXIS_GAP = 5;
 const DEFAULT_Y_AXIS_GAP = 5;
 
+const DEFAULT_CHART_TITLE: ChartTitle = {
+  type: "standard",
+  content: 'default chart title',
+  options : {},
+}
+
 class BaseConfig {
   type: string;
-  title:string;
+
   width: number = DEFAULT_WIDTH;
   height: number = DEFAULT_HEIGHT;
   xAxisGap: number = DEFAULT_X_AXIS_GAP;
@@ -49,6 +67,7 @@ class BaseConfig {
   verticalConfig: VerticalStyleConfig;
   backgroundConfig: BackgroundStyleConfig;
   lineConfigList: LineStyleConfig[];
+  chart_title:ChartTitleConfig;
 
   // Data Option
   dataFlowConfig: DataFlowConfig;
@@ -65,7 +84,7 @@ class BaseConfig {
 
   constructor(options: Options) {
     this.type = options.type;
-    this.title = options.title;
+
     this.width = options.width ?? DEFAULT_WIDTH
     this.height = options.height ?? DEFAULT_HEIGHT
     this.xAxisGap = options.graph.xAxis.gap ?? DEFAULT_X_AXIS_GAP
@@ -81,7 +100,7 @@ class BaseConfig {
     this.verticalConfig = new VerticalStyleConfig(options.graph.xAxis.style)
     this.backgroundConfig = new BackgroundStyleConfig(options.graph.background)
     this.lineConfigList = options.graph.line.datasets.map((value: DataFlow) : LineStyleConfig => new LineStyleConfig(value.style));
-    
+    this.chart_title = new ChartTitleConfig(options.chart_title)
     // data flow config
     this.dataFlowConfig = new DataFlowConfig(options.graph.line.datasets)
 

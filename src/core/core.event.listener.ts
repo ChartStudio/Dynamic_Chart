@@ -31,8 +31,16 @@ class EventListener {
     })
   }
 
+  mouseOutEvent<T>(handler: Function, helper: T) {
+    this.canvas.addEventListener("mouseout", (e) => handler(e, helper))
+  }
+
   mouseLeaveEvent<T>(handler: Function, helper: T) {
     this.canvas.addEventListener("mouseleave", (e) => handler(e, helper))
+  }
+
+  focusoutEvent<T>(handler: Function, helper: T) {
+    this.canvas.addEventListener("focusout", (e) => handler(e, helper))
   }
 
   private getEventLocation(event: MouseEvent): MousePoint {

@@ -20,4 +20,11 @@ export interface LineStyle {
     fillStyle?: string;
     opacity?: number;
   }
+  tooltip?: {
+    fillStyle?: string;
+    font?: string;
+    textBaseline?: string;
+    textAlign?: string;
+    callback?: Function;
+  }
 }

@@ -3,36 +3,36 @@ import { DataFlowConfig, LineStyleConfig } from '../config'
 import { GraphData } from '../type'
 import { FrameUtil, Frame } from '../util';
 
-interface LineDrawPixels {
+export interface LineDrawPixels {
   line: BasePixel[];
   full: FullLineDrawPixel
   style: LineStyleConfig
 }
 
-interface BasePixel {
+export interface BasePixel {
   x: number,
   y: number
 }
 
-interface FullLineDrawPixel {
+export interface FullLineDrawPixel {
   x: number,
   y: number,
   nextX: number
 }
 
-interface AnimationDrawPixels {
+export interface AnimationDrawPixels {
   line: AnimationPixel[];
   full: FullLineDrawPixel
   style: LineStyleConfig
 }
 
-interface AnimationPixel {
+export interface AnimationPixel {
   x: number,
   y: number,
   isDot: boolean
 }
 
-interface AxisDrawPixel {
+export interface AxisDrawPixel {
   line: {
     x: number,
     y: number,
@@ -46,7 +46,7 @@ interface AxisDrawPixel {
   }
 }
 
-interface FindPointIndex {
+export interface FindPointIndex {
   lineIndex: number;
   index: number;
 }
@@ -104,11 +104,34 @@ class Position {
     this.dataFlowConfig = config.dataFlowConfig
   }
 
-  getAnimationEndCondition(): number {
+  getMaxYAxisPixel(): number {
+    return this.baseYAxisMargin
+  }
+
+  getMiddleYAxisPixel(): number {
+    return this.baseYAxisMargin + ((this.height - this.baseYAxisPadding - this.baseYAxisMargin) / 2)
+  }
+
+  getMinYAxisPixel(): number {
+    return this.height - this.baseYAxisPadding
+  }
+
+  isLeft(index: number): boolean {
+    return (index > (this.dataFlowConfig.graphDataList[0].length / 2))
+  }
+
+  getFlowEndIndex(): number {
     if (this.requireFrameUp()) {
       return (this.dataFlowConfig.graphDataList[0].length * 9)
     }
     return this.dataFlowConfig.graphDataList[0].length
+  }
+
+  getFlowInterval(): number {
+    if (this.requireFrameUp()) {
+      return 1
+    }
+    return Math.floor(this.dataFlowConfig.graphDataList[0].length / 100)
   }
 
   private requireFrameUp(): boolean {
@@ -272,7 +295,8 @@ class Position {
     for (let i = 0; i < this.dataFlowConfig.graphDataList.length; i++) {
       let line = this.dataFlowConfig.graphDataList[i];
       let style = this.dataFlowConfig.lineConfigList[i];
-      let r = style.pointRadius + fixedSize
+      let originalRadius = style.pointRadius
+      let r = originalRadius + fixedSize
 
       for (let j = 0; j < line.length; j++) {
         let a = this.getXAxisDataPixel(line[j].x) + this.baseXAxisPadding
@@ -284,6 +308,92 @@ class Position {
       }
     }
     return {lineIndex: -1, index: -1}
+  }
+
+  isPixelXAxisPoint(x: number, fixedSize: number): number {
+    for (let i = 0; i < this.dataFlowConfig.graphDataList.length; i++) {
+      let line = this.dataFlowConfig.graphDataList[i];
+
+      for (let j = 0; j < line.length; j++) {
+        let pointX = this.getXAxisDataPixel(line[j].x) + this.baseXAxisPadding
+        if (pointX + fixedSize > x && pointX - fixedSize < x) {
+          return j
+        }
+      }
+    }
+    return -1
+  }
+
+  getLineGapWidth(): number {
+    let line = this.dataFlowConfig.graphDataList[0];
+    if (line.length <= 1) {
+      return this.width - this.baseXAxisMargin - this.baseXAxisPadding;
+    } else {
+      return this.getXAxisDataPixel(line[1].x) - this.getXAxisDataPixel(line[0].x)
+    }
+  }
+
+  getSingleIndexToPixel(lineIndex: number, index: number): BasePixel {
+    let line = this.dataFlowConfig.graphDataList[lineIndex];
+
+    let x = this.getXAxisDataPixel(line[index].x) + this.baseXAxisPadding
+    let y = this.getYAxisDataPixel(line[index].y) - this.baseYAxisPadding
+    
+    return {x: x, y: y}
+  }
+
+  getSingleIndexToAvgPixel(index: number): BasePixel {
+    let totalX = 0
+    let totalY = 0
+
+    for (let i = 0; i < this.dataFlowConfig.graphDataList.length; i++) {
+      let line = this.dataFlowConfig.graphDataList[i];
+      
+      totalX += this.getXAxisDataPixel(line[index].x) + this.baseXAxisPadding
+      totalY += this.getYAxisDataPixel(line[index].y) - this.baseYAxisPadding
+    }
+
+    let avgX = totalX / this.dataFlowConfig.graphDataList.length
+    let avgY = totalY / this.dataFlowConfig.graphDataList.length
+
+
+    return {x: avgX, y: avgY}
+  }
+
+  getTwinIndexToAvgMovingPixel(lastIndex: number, index: number, fixedSize: number, gap: number): BasePixel {
+    let lastAvgPixel = this.getSingleIndexToAvgPixel(lastIndex)
+    let avgPixel = this.getSingleIndexToAvgPixel(index)
+
+    return this.getTwinPixelToAvgPixel(lastAvgPixel.x, avgPixel.x, 
+      lastAvgPixel.y, avgPixel.y, 
+      fixedSize, gap)
+  }
+
+  getTwinPixelToAvgPixel(x0: number, x1: number, y0: number, y1: number, fixedSize: number, gap: number): BasePixel {
+    let x = x0 + (x1 - x0) * fixedSize / gap;
+    let y = y0 + (y1 - y0) * fixedSize / gap;
+
+    return {x: x, y: y}
+  }
+
+  getDisplayTooltipDatas(index: number): string {
+    let data = []
+
+    for (let lineIndex = 0; lineIndex < this.dataFlowConfig.graphDataList.length; lineIndex++) {
+      data.push(this.getDisplayTooltipData(lineIndex, index))
+    }
+
+    return data.join("\n")
+  }
+
+  getDisplayTooltipData(lineIndex: number, index: number): string {
+    let line = this.dataFlowConfig.graphDataList[lineIndex];
+    let style = this.dataFlowConfig.lineConfigList[lineIndex];
+
+    let x = line[index].x
+    let y = line[index].y
+
+    return style.tooltipCallback(x, y, lineIndex)
   }
 }
 

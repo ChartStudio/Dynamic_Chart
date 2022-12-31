@@ -1,4 +1,10 @@
-import { HorizontalStyleConfig, VerticalStyleConfig, LineStyleConfig, BackgroundStyleConfig } from '../config'
+import { 
+  HorizontalStyleConfig, 
+  VerticalStyleConfig, 
+  LineStyleConfig, 
+  BackgroundStyleConfig, 
+  TooltipStyleConfig
+} from '../config'
 import { ColorUtil } from '../util' 
 import BaseConfig from "./core.config"
 
@@ -7,16 +13,24 @@ class Styler {
   private horizontalConfig: HorizontalStyleConfig;
   private verticalConfig: VerticalStyleConfig;
   private backgroundConfig: BackgroundStyleConfig;
+  private lineConfigList: LineStyleConfig[];
+  private tooltipConfig: TooltipStyleConfig;
+
   private isAnimate: boolean;
   private isPointEvent: boolean;
+  private isTooltipEvent: boolean;
 
   constructor(context: CanvasRenderingContext2D | null, config: BaseConfig) {
     this.context = context;
     this.horizontalConfig = config.horizontalConfig;
     this.verticalConfig = config.verticalConfig;
     this.backgroundConfig = config.backgroundConfig;
+    this.lineConfigList = config.lineConfigList
+    this.tooltipConfig = config.tooltipConfig;
+
     this.isAnimate = config.isAnimate;
     this.isPointEvent = config.isPointEvent;
+    this.isTooltipEvent = config.isTooltipEvent;
   }
   
   isActivaPointEvent(): boolean {
@@ -25,6 +39,10 @@ class Styler {
 
   isActivaAnimation(): boolean {
     return this.isAnimate
+  }
+
+  isActiveTooltipEvent(): boolean {
+    return this.isTooltipEvent;
   }
 
   isActiveBackground(): boolean {
@@ -36,7 +54,11 @@ class Styler {
   }
 
   getBackgroundImage(): HTMLImageElement {
-    return this.backgroundConfig.image
+    return this.backgroundConfig.image;
+  }
+
+  getTooltipType(): string {
+    return this.tooltipConfig.type;
   }
 
   setHorizontalStyle() {
@@ -57,6 +79,26 @@ class Styler {
     this.context!.textAlign = this.verticalConfig.textAlign as CanvasTextAlign;
   }
 
+  setTooltipBoxStyle() {
+    this.context!.lineJoin = this.tooltipConfig.boxLineJoin as CanvasLineJoin;
+    this.context!.lineWidth = this.tooltipConfig.boxLineWidth;
+    this.context!.strokeStyle = this.getDetailColor(this.tooltipConfig.boxStrokeStyle, this.tooltipConfig.boxStrokeOpacity);
+    this.context!.fillStyle = this.getDetailColor(this.tooltipConfig.boxFillStyle, this.tooltipConfig.boxFillOpacity);
+  }
+
+  setTooltipLineStyle() {
+    this.context!.lineWidth = this.tooltipConfig.lineLineWidth;
+    this.context!.strokeStyle = this.getDetailColor(this.tooltipConfig.lineStrokeStyle, this.tooltipConfig.lineStrokeOpacity);
+    this.context!.fillStyle = this.getDetailColor(this.tooltipConfig.lineFillStyle, this.tooltipConfig.lineFillOpacity);
+  }
+
+  setTooltipFontStyle(index: number) {
+    this.context!.fillStyle = this.lineConfigList[index].tooltipFillStyle;
+    this.context!.textAlign = this.lineConfigList[index].tooltipTextAlign as CanvasTextAlign
+    this.context!.textBaseline = this.lineConfigList[index].tooltipTextBaseline as CanvasTextBaseline
+    this.context!.font = this.lineConfigList[index].tooltipFont;
+  }
+
   setLineStyle(style: LineStyleConfig) {
     this.context!.strokeStyle = style.strokeStyle;
     this.context!.fillStyle = style.fillStyle;
@@ -65,12 +107,16 @@ class Styler {
   }
 
   setBackgroundStyle() {
-    this.setDetailFillStyle(this.backgroundConfig.fillStyle, this.backgroundConfig.opacity);
+    this.context!.fillStyle = this.getDetailColor(this.backgroundConfig.fillStyle, this.backgroundConfig.opacity);
   }
 
   setDetailFillStyle(color: string, opacity: number) {
+    this.context!.fillStyle = this.getDetailColor(color, opacity)
+  }
+
+  private getDetailColor(color: string, opacity: number): string {
     let rgb = ColorUtil.hexToRgb(color)
-    this.context!.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
+    return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
   }
 
   setDetailStrokeStyle(strokeStyle: string, width: number) {

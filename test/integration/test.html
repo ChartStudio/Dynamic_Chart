@@ -1,10 +1,22 @@
-<div>
-  <p style="font-size: 14px; font-weight: bold;">Simple Chart</p>
-  <canvas id="simpleChart"></canvas>
+<div style="display: flex; flex-direction: row;">
+  <div style="display: flex; flex-direction: column;">
+    <p style="font-size: 14px; font-weight: bold;">Simple Chart</p>
+    <canvas id="simpleChart"></canvas>
+  </div>
+  <div style="display: flex; flex-direction: column;">
+    <p style="font-size: 14px; font-weight: bold;">Single Chart</p>
+    <canvas id="singleChart"></canvas>
+  </div>
 </div>
-<div>
-  <p style="font-size: 14px; font-weight: bold;">Image Chart</p>
-  <canvas id="imageChart"></canvas>
+<div style="display: flex; flex-direction: row;">
+  <div style="display: flex; flex-direction: column;">
+    <p style="font-size: 14px; font-weight: bold;">Image Chart</p>
+    <canvas id="imageChart"></canvas>
+  </div>
+  <div style="display: flex; flex-direction: column;">
+    <p style="font-size: 14px; font-weight: bold;">Any Chart</p>
+    <canvas id="anyChart"></canvas>
+  </div>
 </div>
 
 <script type="module">
@@ -25,7 +37,7 @@
             fillStyle: "#1111111",
             opacity: 0.5,
             isImage: false,
-            image: image,
+            // image: image,
           },
           line: {
             datasets: [
@@ -44,7 +56,7 @@
                 ],
                 style: {
                   isLine: true,
-                  isFull: false,
+                  isFull: true,
                   isPoint: true,
                   line: {
                     strokeStyle: "#FF33FF",
@@ -62,6 +74,12 @@
                     width: 1.5,
                     fillStyle: '#FF33FF',
                     opacity: 0.2
+                  },
+                  tooltip: {
+                    fillStyle: "#ffffff",
+                    font: "12px Noto Sans KR",
+                    textBaseline: "middle",
+                    textAlign: "center",
                   }
                 }
               },
@@ -80,7 +98,7 @@
                 ],
                 style: {
                   isLine: true,
-                  isFull: false,
+                  isFull: true,
                   isPoint: true,
                   line: {
                     strokeStyle: "#111111",
@@ -98,6 +116,12 @@
                     width: 1.5,
                     fillStyle: '#111111',
                     opacity: 0.2
+                  },
+                  tooltip: {
+                    fillStyle: "#ffffff",
+                    font: "12px Noto Sans KR",
+                    textBaseline: "middle",
+                    textAlign: "center",
                   }
                 }
               },
@@ -134,12 +158,19 @@
                     width: 1.5,
                     fillStyle: '#333399',
                     opacity: 0.2
+                  },
+                  tooltip: {
+                    fillStyle: "#ffffff",
+                    font: "12px Noto Sans KR",
+                    textBaseline: "middle",
+                    textAlign: "center",
                   }
                 }
               }
             ],
             isAnimate: true,
             isPointEvent: true,
+            isTooltipEvent: true,
           },
           xAxis: {
             gap: 10,
@@ -164,7 +195,138 @@
               lineWidth: 1,
               drawLine: true
             }
-          }
+          },
+          tooltip: {
+            type: 'base',
+            box: {
+              strokeStyle: "#111111",
+              strokeOpacity: 0.7,
+              fillStyle: "#111111",
+              fillOpacity: 0.5,
+              lineWidth: 3,
+              lineJoin: 'round'
+            },
+            line: {
+              strokeStyle: "#00FF00",
+              strokeOpacity: 1,
+              fillStyle: "#00FF00",
+              fillOpacity: 1,
+              lineWidth: 1,
+            }
+          },
+          event: {
+            type: 'multi-point'
+          },
+        }
+      }
+    )
+  );
+
+  const singleChart = document.getElementById('singleChart');
+  const randomValue = () => {
+    let result = []
+    for (let i = 0; i < 2000; i++) {
+      result.push({x: i, y: Math.floor(Math.random() * 101)})
+    }
+    return result
+  }
+  new BaseChart(
+    singleChart,
+    new BaseConfig(
+      {
+        type: "test",
+        width: 1200,
+        height: 200,
+        graph: {
+          background: {
+            isActvie: false,
+            fillStyle: "#1111111",
+            opacity: 0.5,
+            isImage: false,
+            // image: image,
+          },
+          line: {
+            datasets: [
+              {
+                data: randomValue(),
+                style: {
+                  isLine: true,
+                  isFull: true,
+                  isPoint: false,
+                  line: {
+                    strokeStyle: "#FF33FF",
+                    fillStyle: "#FF33FF",
+                    width: 1.5,
+                  },
+                  full: {
+                    fillStyle: '#FF33FF',
+                    opacity: 0.5
+                  },
+                  point: {
+                    type: "dot",
+                    radius: 5,
+                    strokeStyle: "#FF33FF",
+                    width: 1.5,
+                    fillStyle: '#FF33FF',
+                    opacity: 0.2
+                  },
+                  tooltip: {
+                    fillStyle: "#ffffff",
+                    font: "12px Noto Sans KR",
+                    textBaseline: "middle",
+                    textAlign: "center",
+                    callback: (x, y, index) => {
+                      return `${index} 번째 값: ${y} km`
+                    }                    
+                  }
+                }
+              }
+            ],
+            isAnimate: true,
+            isPointEvent: false,
+            isTooltipEvent: true,
+          },
+          xAxis: {
+            gap: 10,
+            style: {
+              strokeStyle: "#111111",
+              fillStyle: "#111111",
+              font: '12px Noto Sans KR',
+              lineWidth: 1,
+              drawLine: true,
+            }
+          },
+          yAxis: {
+            gap: 10,
+            style: {
+              strokeStyle: "#111111",
+              fillStyle: "#111111",
+              font: '12px Noto Sans KR',
+              lineWidth: 1,
+              drawLine: true
+            }
+          },
+          tooltip: {
+            type: 'line',
+            box: {
+              strokeStyle: "#111111",
+              strokeOpacity: 0.7,
+              fillStyle: "#111111",
+              fillOpacity: 0.5,
+              lineWidth: 3,
+              lineJoin: 'round'
+            },
+            line: {
+              strokeStyle: "#111111",
+              strokeOpacity: 1,
+              fillStyle: "#111111",
+              fillOpacity: 1,
+              lineWidth: 1,
+            }
+          },
+          event: {
+            type: 'fixed-point'
+          },
         }
       }
     )
@@ -198,7 +360,7 @@
                     {x: 1, y: 1},
                     {x: 2, y: 2},
                     {x: 3, y: 6},
-                    {x: 4, y: 4},
+                    {x: 4, y: 100},
                     {x: 5, y: 4},
                     {x: 6, y: 6},
                     {x: 7, y: 7},
@@ -225,6 +387,15 @@
                       width: 1.5,
                       fillStyle: '#FF33FF',
                       opacity: 0.2
+                    },
+                    tooltip: {
+                      fillStyle: "#ffffff",
+                      font: "12px Noto Sans KR",
+                      textBaseline: "middle",
+                      textAlign: "center",
+                      callback: (x, y, index) => {
+                        return `${index} 번째 값: ${y} km`
+                      }
                     }
                   }
                 },
@@ -235,7 +406,7 @@
                     {x: 2, y: 3},
                     {x: 3, y: 2},
                     {x: 4, y: 2},
-                    {x: 5, y: 3},
+                    {x: 5, y: 90},
                     {x: 6, y: 9},
                     {x: 7, y: 6},
                     {x: 8, y: 7},
@@ -261,6 +432,15 @@
                       width: 1.5,
                       fillStyle: '#111111',
                       opacity: 0.2
+                    },
+                    tooltip: {
+                      fillStyle: "#ffffff",
+                      font: "12px Noto Sans KR",
+                      textBaseline: "middle",
+                      textAlign: "center",
+                      callback: (x, y, index) => {
+                        return `${index} 번째 값: ${y} m`
+                      }
                     }
                   }
                 },
@@ -274,11 +454,11 @@
                     {x: 5, y: 2},
                     {x: 6, y: 2},
                     {x: 7, y: 4},
-                    {x: 8, y: 4},
+                    {x: 8, y: 80},
                     {x: 9, y: 6},
                   ],
                   style: {
-                    isLine: false,
+                    isLine: true,
                     isFull: false,
                     isPoint: true,
                     line: {
@@ -297,12 +477,22 @@
                       width: 1.5,
                       fillStyle: '#333399',
                       opacity: 0.2
+                    },
+                    tooltip: {
+                      fillStyle: "#ffffff",
+                      font: "12px Noto Sans KR",
+                      textBaseline: "middle",
+                      textAlign: "center",
+                      callback: (x, y, index) => {
+                        return `${index} 번째 값: ${y} cm`
+                      }
                     }
                   }
                 }
               ],
               isAnimate: true,
-              isPointEvent: false,
+              isPointEvent: true,
+              isTooltipEvent: true,
             },
             xAxis: {
               gap: 10,
@@ -327,10 +517,240 @@
                 lineWidth: 1,
                 drawLine: true
               }
-            }
+            },
+            tooltip: {
+              type: 'base',
+              box: {
+                strokeStyle: "#111111",
+                strokeOpacity: 0.7,
+                fillStyle: "#111111",
+                fillOpacity: 0.5,
+                lineWidth: 3,
+                lineJoin: 'round'
+              },
+              line: {
+                strokeStyle: "#00FF00",
+                strokeOpacity: 1,
+                fillStyle: "#00FF00",
+                fillOpacity: 1,
+                lineWidth: 1,
+              }
+            },
+            event: {
+              // type: 'single-point'
+              type: 'single-interactive-point'
+            },
           }
         }
       )
     );
   }
+
+  const anyChart = document.getElementById('anyChart');
+
+  new BaseChart(
+    anyChart,
+    new BaseConfig(
+      {
+        type: "test",
+        width: 600,
+        height: 400,
+        graph: {
+          background: {
+            isActvie: true,
+            fillStyle: "#FFFFFF",
+            opacity: 0.5,
+            isImage: false
+          },
+          line: {
+            datasets: [
+              {
+                data: [
+                  {x: 0, y: 0},
+                  {x: 1, y: 1},
+                  {x: 2, y: 2},
+                  {x: 3, y: 6},
+                  {x: 4, y: 100},
+                  {x: 5, y: 4},
+                  {x: 6, y: 6},
+                  {x: 7, y: 7},
+                  {x: 8, y: 1},
+                  {x: 9, y: 3},
+                ],
+                style: {
+                  isLine: true,
+                  isFull: false,
+                  isPoint: true,
+                  line: {
+                    strokeStyle: "#FF33FF",
+                    fillStyle: "#FF33FF",
+                    width: 3,
+                  },
+                  full: {
+                    fillStyle: '#FF33FF',
+                    opacity: 0.5
+                  },
+                  point: {
+                    type: "dot",
+                    radius: 10,
+                    strokeStyle: "#FF33FF",
+                    width: 1.5,
+                    fillStyle: '#FF33FF',
+                    opacity: 0.2
+                  },
+                  tooltip: {
+                    fillStyle: "#ffffff",
+                    font: "12px Noto Sans KR",
+                    textBaseline: "middle",
+                    textAlign: "center",
+                    callback: (x, y, index) => {
+                      return `${index} 번째 값: ${y} km`
+                    }
+                  }
+                }
+              },
+              {
+                data: [
+                  {x: 0, y: 0},
+                  {x: 1, y: 3},
+                  {x: 2, y: 3},
+                  {x: 3, y: 2},
+                  {x: 4, y: 2},
+                  {x: 5, y: 90},
+                  {x: 6, y: 9},
+                  {x: 7, y: 6},
+                  {x: 8, y: 7},
+                  {x: 9, y: 1},
+                ],
+                style: {
+                  isLine: true,
+                  isFull: false,
+                  isPoint: true,
+                  line: {
+                    strokeStyle: "#111111",
+                    fillStyle: "#111111",
+                    width: 2,
+                  },
+                  full: {
+                    fillStyle: '#111111',
+                    opacity: 0.5
+                  },
+                  point: {
+                    type: "dot",
+                    radius: 5,
+                    strokeStyle: "#111111",
+                    width: 1.5,
+                    fillStyle: '#111111',
+                    opacity: 0.2
+                  },
+                  tooltip: {
+                    fillStyle: "#ffffff",
+                    font: "12px Noto Sans KR",
+                    textBaseline: "middle",
+                    textAlign: "center",
+                    callback: (x, y, index) => {
+                      return `${index} 번째 값: ${y} m`
+                    }
+                  }
+                }
+              },
+              {
+                data: [
+                  {x: 0, y: 0},
+                  {x: 1, y: 1},
+                  {x: 2, y: 1},
+                  {x: 3, y: 3},
+                  {x: 4, y: 3},
+                  {x: 5, y: 2},
+                  {x: 6, y: 2},
+                  {x: 7, y: 4},
+                  {x: 8, y: 80},
+                  {x: 9, y: 6},
+                ],
+                style: {
+                  isLine: true,
+                  isFull: false,
+                  isPoint: true,
+                  line: {
+                    strokeStyle: "#333399",
+                    fillStyle: "#333399",
+                    width: 3,
+                  },
+                  full: {
+                    fillStyle: '#333399',
+                    opacity: 0.5
+                  },
+                  point: {
+                    type: "dot",
+                    radius: 5,
+                    strokeStyle: "#333399",
+                    width: 1.5,
+                    fillStyle: '#333399',
+                    opacity: 0.2
+                  },
+                  tooltip: {
+                    fillStyle: "#ffffff",
+                    font: "12px Noto Sans KR",
+                    textBaseline: "middle",
+                    textAlign: "center",
+                    callback: (x, y, index) => {
+                      return `${index} 번째 값: ${y} cm`
+                    }
+                  }
+                }
+              }
+            ],
+            isAnimate: true,
+            isPointEvent: true,
+            isTooltipEvent: true,
+          },
+          xAxis: {
+            gap: 10,
+            style: {
+              // strokeStyle: "#ffffff",
+              // fillStyle: "#ffffff",
+              strokeStyle: "#111111",
+              fillStyle: "#111111",
+              font: '14px Noto Sans KR',
+              lineWidth: 1,
+              drawLine: true,
+            }
+          },
+          yAxis: {
+            gap: 10,
+            style: {
+              // strokeStyle: "#ffffff",
+              // fillStyle: "#ffffff",
+              strokeStyle: "#111111",
+              fillStyle: "#111111",
+              font: '14px Noto Sans KR',
+              lineWidth: 1,
+              drawLine: true
+            }
+          },
+          tooltip: {
+            type: 'line',
+            box: {
+              strokeStyle: "#111111",
+              strokeOpacity: 0.7,
+              fillStyle: "#111111",
+              fillOpacity: 0.5,
+              lineWidth: 3,
+              lineJoin: 'round'
+            },
+            line: {
+              strokeStyle: "#111111",
+              strokeOpacity: 1,
+              fillStyle: "#111111",
+              fillOpacity: 1,
+              lineWidth: 1,
+            }
+          },
+          event: {
+            type: 'multi-point'
+          },
+        }
+      }
+    )
+  );
 </script>

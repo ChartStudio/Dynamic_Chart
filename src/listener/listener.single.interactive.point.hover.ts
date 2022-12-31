@@ -1,22 +1,22 @@
-import Animation from "../core/core.animation";
 import Position from "../core/core.position";
+import { GraphTaskController } from "../task";
 
 interface PointLocation {
   lineIndex: number;
   index: number;
 }
 
-class PointHoverHelper {
+class SingleInteractivePointHoverHelper {
   isPopUp: boolean;
   position: Position;
-  animation: Animation; 
+  graphTaskController: GraphTaskController; 
   savedLoaction: PointLocation;
 
-  constructor(position: Position, animation: Animation) {
+  constructor(position: Position, graphTaskController: GraphTaskController) {
     this.isPopUp = false;
     this.savedLoaction = this.initLocation()
     this.position = position;
-    this.animation = animation;
+    this.graphTaskController = graphTaskController;
   }
 
   changeStatusPopUp() {
@@ -42,7 +42,7 @@ class PointHoverHelper {
   }
 }
 
-export const pointMouseMoveListener = (x: number, y: number, helper: PointHoverHelper, event: MouseEvent) => {
+export const singleInteractivePointMouseMoveListener = (x: number, y: number, helper: SingleInteractivePointHoverHelper, event: MouseEvent) => {
   event.stopPropagation()
 
   let findLoaction = helper.initLocation()
@@ -56,23 +56,26 @@ export const pointMouseMoveListener = (x: number, y: number, helper: PointHoverH
   if (helper.isPopUp === false && helper.isLocationValid(findLoaction.index, findLoaction.lineIndex)) {
     helper.changeStatusPopUp()
     helper.savedLoaction = findLoaction
-    helper.animation.pointPopUpAnimation(helper.savedLoaction.lineIndex, helper.savedLoaction.index)
+    helper.graphTaskController.singleInteractivePointPopUp(helper.savedLoaction.lineIndex, helper.savedLoaction.index)
   } else if (helper.isPopUp === true && !helper.isLocationValid(findLoaction.index, findLoaction.lineIndex)) {
     helper.changeStatusPopUp()
-    helper.animation.pointPopDownAnimation(helper.savedLoaction.lineIndex, helper.savedLoaction.index)
+    helper.graphTaskController.singleInteractivePointPopDown(helper.savedLoaction.lineIndex, helper.savedLoaction.index)
     helper.savedLoaction = findLoaction
+  } else if (helper.isPopUp === true && !helper.isSameLocation(findLoaction.index, findLoaction.lineIndex)) {
+    helper.savedLoaction = findLoaction
+    helper.graphTaskController.singleInteractivePointPopUp(helper.savedLoaction.lineIndex, helper.savedLoaction.index)
   }
 }
 
-export const pointMouseLeaveListener = (event: MouseEvent, helper: PointHoverHelper,) => {
+export const singleInteractivePointMouseLeaveListener = (event: MouseEvent, helper: SingleInteractivePointHoverHelper) => {
   event.stopPropagation()
 
   if (helper.isPopUp === true && helper.isLocationValid(helper.savedLoaction.index, helper.savedLoaction.lineIndex)) {
     helper.changeStatusPopUp()
-    helper.animation.pointPopDownAnimation(helper.savedLoaction.lineIndex, helper.savedLoaction.index)
+    helper.graphTaskController.singleInteractivePointPopDown(helper.savedLoaction.lineIndex, helper.savedLoaction.index)
     helper.savedLoaction = helper.initLocation()
   }
 }
 
 
-export default PointHoverHelper;
+export default SingleInteractivePointHoverHelper;

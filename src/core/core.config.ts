@@ -1,5 +1,20 @@
-import { HorizontalStyleConfig, VerticalStyleConfig, BackgroundStyleConfig, DataFlowConfig, LineStyleConfig } from '../config'
-import { HorizontalStyle, VerticalStyle, BackgroundStyle, DataFlow } from '../type'
+import { 
+  HorizontalStyleConfig, 
+  VerticalStyleConfig, 
+  BackgroundStyleConfig, 
+  LineStyleConfig, 
+  DataFlowConfig, 
+  EventFlowConfig,
+  TooltipStyleConfig 
+} from '../config'
+import { 
+  HorizontalStyle, 
+  VerticalStyle, 
+  BackgroundStyle, 
+  DataFlow, 
+  EventFlow,
+  TooltipStyle 
+} from '../type'
 
 interface Options {
   type: string;
@@ -19,12 +34,16 @@ interface Options {
       datasets: DataFlow[]
       isAnimate?: boolean;
       isPointEvent?: boolean;
+      isTooltipEvent?: boolean;
     };
+    event?: EventFlow;
+    tooltip?: TooltipStyle;
   }
 }
 
 const DEFAULT_ANIMATION = false;
 const DEFAULT_POINT_EVENT = true;
+const DEFAULT_TOOLTIP_EVENT = false;
 const DEFAULT_WIDTH = 300;
 const DEFAULT_HEIGHT = 200;
 const DEFAULT_X_AXIS_GAP = 5;
@@ -41,15 +60,22 @@ class BaseConfig {
   isAnimate: boolean = DEFAULT_ANIMATION;
   // Point Event Flag
   isPointEvent: boolean = DEFAULT_POINT_EVENT;
+  // Tooltip Event Flag
+  isTooltipEvent: boolean = DEFAULT_TOOLTIP_EVENT;
 
   // Style Option
   horizontalConfig: HorizontalStyleConfig;
   verticalConfig: VerticalStyleConfig;
   backgroundConfig: BackgroundStyleConfig;
+  tooltipConfig: TooltipStyleConfig;
+
   lineConfigList: LineStyleConfig[];
 
   // Data Option
   dataFlowConfig: DataFlowConfig;
+
+  // Event Option
+  eventFlowConfig: EventFlowConfig;
 
   // After Data Settings
   maxXAxis: number;
@@ -65,6 +91,7 @@ class BaseConfig {
     this.type = options.type;
     this.width = options.width ?? DEFAULT_WIDTH
     this.height = options.height ?? DEFAULT_HEIGHT
+
     this.xAxisGap = options.graph.xAxis.gap ?? DEFAULT_X_AXIS_GAP
     this.yAxisGap = options.graph.yAxis.gap ?? DEFAULT_Y_AXIS_GAP
 
@@ -72,15 +99,21 @@ class BaseConfig {
     this.isAnimate = options.graph.line.isAnimate ?? DEFAULT_ANIMATION
     // point event setting
     this.isPointEvent = options.graph.line.isPointEvent ?? DEFAULT_POINT_EVENT
+    // tooltip event setting
+    this.isTooltipEvent = options.graph.line.isTooltipEvent ?? DEFAULT_TOOLTIP_EVENT
 
     // style config
     this.horizontalConfig = new HorizontalStyleConfig(options.graph.yAxis.style)
     this.verticalConfig = new VerticalStyleConfig(options.graph.xAxis.style)
     this.backgroundConfig = new BackgroundStyleConfig(options.graph.background)
     this.lineConfigList = options.graph.line.datasets.map((value: DataFlow) : LineStyleConfig => new LineStyleConfig(value.style));
-    
+    this.tooltipConfig = new TooltipStyleConfig(options.graph.tooltip)
+
     // data flow config
     this.dataFlowConfig = new DataFlowConfig(options.graph.line.datasets)
+
+    // event flow config
+    this.eventFlowConfig = new EventFlowConfig(options.graph.event)
 
     // data setting
     this.maxXAxis = this.dataFlowConfig.getXAxisMaxValue()

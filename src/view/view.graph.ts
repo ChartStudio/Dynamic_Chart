@@ -1,6 +1,8 @@
 import { LineStyleConfig } from '../config'
 import Styler from '../core/core.styler'
-import Position from '../core/core.position'
+import { default as Position, LineDrawPixels } from '../core/core.position'
+import { GraphTooltip } from './tooltip';
+import { GraphPoint } from './point';
 
 class GraphView {
   private context: CanvasRenderingContext2D | null;
@@ -11,6 +13,10 @@ class GraphView {
   // Styler Object
   private styler: Styler
 
+  // Sub domain
+  private graphPoint: GraphPoint;
+  private graphTooltip: GraphTooltip;
+
   constructor(
     context: CanvasRenderingContext2D | null, 
     position: Position,
@@ -19,6 +25,9 @@ class GraphView {
     this.context = context;
     this.position = position;
     this.styler = styler;
+
+    this.graphPoint = new GraphPoint(this.context, this.position, this.styler)
+    this.graphTooltip = new GraphTooltip(this.context, this.position, this.styler)
   }
 
   refreshCanvas() {
@@ -97,62 +106,31 @@ class GraphView {
       let style = pixelList[i].style;
       let full = pixelList[i].full;
 
+      /**
+       * Draw Line
+       */
       this.styler.setLineStyle(style);
-
       this.context?.beginPath();
       this.context?.moveTo(line[0].x, line[0].y);
-
       for (let j = 1; j < line.length; j++) {        
         this.drawLine(line[j].x, line[j].y, style)
       }
-
       this.context?.stroke();
+
+      /**
+       * Fill the Line
+       */
       this.drawLineWithFullOver(full.x, full.nextX, full.y, style);
       this.context?.closePath();
-
-      for (let j = 0; j < line.length; j++) {
-        this.drawPoint(line[j].x, line[j].y, style)
-      }
     }
   }
 
   private drawLine(x: number, y: number, style: LineStyleConfig) {
-    this.styler.setLineStyle(style)
-
     if (style.isLine === true) {
       this.context?.lineTo(x, y);
     } else {
       this.context?.moveTo(x, y);
     }
-  }
-
-  private drawPoint(x: number, y: number, style: LineStyleConfig) {
-    if (style.isPoint === false) {
-      return;
-    }
-
-    switch(style.pointType) {
-      case "dot":
-        this.drawDotPoint(x, y, style);
-      default:
-        break;
-    }
-  }
-
-  private drawDotPoint(x: number, y: number, style: LineStyleConfig) {
-    let radius = style.pointRadius
-    let startAngle = 0
-    let endAngle = Math.PI * 2 // 360
-    let counterClockWise = true // 반시계 방향 여부
-    this.context?.beginPath();
-    
-    this.styler.setDetailFillStyle(style.pointFillStyle, style.pointOpacity)
-    this.context?.arc(x, y, radius, startAngle, endAngle, counterClockWise);
-    this.context?.fill()
-
-    this.styler.setDetailStrokeStyle(style.pointStrokeStyle, style.pointLineWidth);
-    this.context?.stroke()
-    this.context?.closePath();
   }
 
   private drawLineWithFullOver(x: number, nextX: number, y: number, style: LineStyleConfig) {
@@ -169,7 +147,11 @@ class GraphView {
     this.context!.globalCompositeOperation = 'source-over';
   }
 
-  drawLinesToFixedPosition(fixedPosition: number) {
+  /**
+   * Animation Drawing Lines Functions
+   */
+
+  drawFlowLines(endIndex: number) {
     let pixelList = this.position.getLineDrawPixelsForAnimation()
 
     for (let i = 0; i < pixelList.length; i++) {
@@ -177,85 +159,204 @@ class GraphView {
       let style = pixelList[i].style;
       let full = pixelList[i].full;
 
+      /**
+       * Draw Line
+       */
+      this.styler.setLineStyle(style);
       this.context?.beginPath();
       this.context?.moveTo(line[0].x, line[0].y);
-
-      for (let j = 1; j < fixedPosition; j++) {
+      for (let j = 1; j < endIndex; j++) {
         this.drawLine(line[j].x, line[j].y, style)
       }
-
-      let endIndexPixel = line[fixedPosition - 1]
-
       this.context?.stroke();
+
+      /**
+       * Fill the Line
+       */
+      let endIndexPixel = line[endIndex - 1]
       this.drawLineWithFullOver(endIndexPixel.x, full.nextX, full.y, style);
       this.context?.closePath();
-
-      for (let j = 0; j < fixedPosition; j++) {
-        if (line[j].isDot === true) {
-          this.drawPoint(line[j].x, line[j].y, style)
-        }
-      }
     }
   }
 
-  drawLinesToFixedSize(lineIndex: number, index: number, fixedSize: number) {
+  /**
+   * Drawing Points Functions
+   */
+
+  drawPoints() {
     let pixelList = this.position.getLineDrawPixels()
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
       let style = pixelList[i].style;
-      let full = pixelList[i].full;
 
-      this.styler.setLineStyle(style);
-
-      this.context?.beginPath();
-      this.context?.moveTo(line[0].x, line[0].y);
-
-      for (let j = 1; j < line.length; j++) {        
-        this.drawLine(line[j].x, line[j].y, style)
-      }
-
-      this.context?.stroke();
-      this.drawLineWithFullOver(full.x, full.nextX, full.y, style);
-      this.context?.closePath();
-
+      /**
+       * Draw the Point
+       */
       for (let j = 0; j < line.length; j++) {
-        if (i === lineIndex && j === index) {
-          this.drawPointToFixedSize(line[j].x, line[j].y, fixedSize, style)
-        } else {
-          this.drawDotPoint(line[j].x, line[j].y, style)
+        this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+      }
+    }
+  }
+
+  drawFlowPoints(endIndex: number) {
+    let pixelList = this.position.getLineDrawPixelsForAnimation()
+    for (let i = 0; i < pixelList.length; i++) {
+      let line = pixelList[i].line;
+      let style = pixelList[i].style;
+
+      /**
+       * Draw the Point
+       */
+      for (let j = 0; j < endIndex; j++) {
+        if (line[j].isDot === true) {
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
         }
       }
     }
   }
 
-  private drawPointToFixedSize(x: number, y: number, fixedSize: number, style: LineStyleConfig) {
-    if (style.isPoint === false) {
-      return;
-    }
+  isDrawPointsEvent(): boolean {
+    return this.styler.isActivaPointEvent()
+  }
 
-    switch(style.pointType) {
-      case "dot":
-        this.drawDotPointToFixedSize(x, y, fixedSize, style);
-      default:
-        break;
+  drawMultiplePointPop(index: number, size: number) {
+    let pixelList = this.position.getLineDrawPixels()
+
+    for (let i = 0; i < pixelList.length; i++) {
+      let line = pixelList[i].line;
+      let style = pixelList[i].style;
+
+      /**
+       * Draw the Point
+       */
+      for (let j = 0; j < line.length; j++) {
+        if (!this.isDrawPointsEvent()) {
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+          continue
+        }
+
+        if (j === index) {
+          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, size, style)
+        } else {
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+        }
+      }
     }
   }
 
-  private drawDotPointToFixedSize(x: number, y: number, fixedSize: number, style: LineStyleConfig) {
-    let radius = style.pointRadius + fixedSize
-    let startAngle = 0
-    let endAngle = Math.PI * 2 // 360
-    let counterClockWise = true // 반시계 방향 여부
-    this.context?.beginPath();
-    
-    this.styler.setDetailFillStyle(style.pointFillStyle, style.pointOpacity)
-    this.context?.arc(x, y, radius, startAngle, endAngle, counterClockWise);
-    this.context?.fill()
+  drawMultiplePointPopUpDown(lastIndex: number, index: number, lastSize: number, size: number) {
+    let pixelList = this.position.getLineDrawPixels()
 
-    this.styler.setDetailStrokeStyle(style.pointStrokeStyle, style.pointLineWidth);
-    this.context?.stroke()
-    this.context?.closePath();
+    for (let i = 0; i < pixelList.length; i++) {
+      let line = pixelList[i].line;
+      let style = pixelList[i].style;
+
+      /**
+       * Draw the Point
+       */
+      for (let j = 0; j < line.length; j++) {
+        if (!this.isDrawPointsEvent()) {
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+          continue
+        }
+
+        if (j === index) {
+          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, size, style)
+        } else if (j === lastIndex) {
+          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, lastSize, style)
+        } else {
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+        }
+      }
+    }
+  }
+
+  drawSinglePointPop(lineIndex: number, index: number, size: number) {
+    let pixelList = this.position.getLineDrawPixels()
+
+    for (let i = 0; i < pixelList.length; i++) {
+      let line = pixelList[i].line;
+      let style = pixelList[i].style;
+
+      /**
+       * Draw the Point
+       */
+      for (let j = 0; j < line.length; j++) {
+        if (!this.isDrawPointsEvent()) {
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+          continue
+        }
+        
+        if (i === lineIndex && j === index) {
+          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, size, style)
+        } else {
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+        }
+      }
+    }
+  }
+
+  /**
+   * Drawing Tooltip Functions
+   */
+  isDrawTooltipEvent(): boolean {
+    return this.styler.isActiveTooltipEvent()
+  }
+
+  drawAvgTooltips(index: number, isActive: boolean) {
+    if (isActive === false) {
+      return;
+    }
+
+    let avgPixel = this.position.getSingleIndexToAvgPixel(index)
+    let displayData = this.position.getDisplayTooltipDatas(index)
+
+    this.graphTooltip.drawTooltip(avgPixel.x, avgPixel.y, displayData, index)
+  }
+
+  drawMovingAvgTooltips(lastIndex: number, index: number, size:number, gap: number, isActive: boolean) {
+    if (isActive === false) {
+      return;
+    }
+
+    let movingPixel = this.position.getTwinIndexToAvgMovingPixel(lastIndex, index, size, gap)
+    let displayData = this.position.getDisplayTooltipDatas(index)
+
+    this.graphTooltip.drawTooltip(movingPixel.x, movingPixel.y, displayData, index)
+  }
+
+  drawSingleTooltips(lineIndex: number, index: number, isActive: boolean) {
+    if (isActive === false) {
+      return;
+    }
+
+    let pixel = this.position.getSingleIndexToPixel(lineIndex, index)
+    let displayData = this.position.getDisplayTooltipData(lineIndex, index)
+
+    this.graphTooltip.drawTooltip(pixel.x, pixel.y, displayData, index)
+  }
+
+  drawSingleInteractiveTooltips(lineIndex: number, index: number, isActive: boolean) {
+    if (isActive === false) {
+      return;
+    }
+
+    let pixel = this.position.getSingleIndexToPixel(lineIndex, index)
+    let displayData = this.position.getDisplayTooltipDatas(index)
+
+    this.graphTooltip.drawTooltip(pixel.x, pixel.y, displayData, index)
+  }
+
+  drawFixedTooltips(x: number, index: number, isActive: boolean) {
+    if (isActive === false) {
+      return;
+    }
+
+    let fixedY = this.position.getMiddleYAxisPixel()
+    let displayData = this.position.getDisplayTooltipDatas(index)
+
+    this.graphTooltip.drawTooltip(x, fixedY, displayData, index)
   }
 }
 

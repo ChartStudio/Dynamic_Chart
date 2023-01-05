@@ -35,6 +35,11 @@ class GraphView {
     this.context?.clearRect(0, 0, pixel.x, pixel.y)
   }
 
+  drawChartTitle(){
+    let pixel = this.position.getRectPixel();
+    this.context?.fillText(this.styler.getChartTitle().getTitleContent(),  pixel.x / 2, 20)
+  }
+
   drawBackground() {
     if (this.styler.isActiveBackground() === false) {
       return;
@@ -57,7 +62,7 @@ class GraphView {
     let pixel = this.position.getRectPixel()
     let image = this.styler.getBackgroundImage()
 
-    this.context?.drawImage(image, 0, 0, pixel.x, pixel.y);
+    this.context?.drawImage(image, 0, 0, pixel.x+200, pixel.y+200);
   }
 
   drawXAxis() {

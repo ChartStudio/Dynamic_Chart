@@ -3,7 +3,8 @@ import {
   VerticalStyleConfig, 
   LineStyleConfig, 
   BackgroundStyleConfig, 
-  TooltipStyleConfig
+  TooltipStyleConfig,
+  ChartTitleConfig,
 } from '../config'
 import { ColorUtil } from '../util' 
 import BaseConfig from "./core.config"
@@ -15,6 +16,8 @@ class Styler {
   private backgroundConfig: BackgroundStyleConfig;
   private lineConfigList: LineStyleConfig[];
   private tooltipConfig: TooltipStyleConfig;
+  private chartTitleConfig: ChartTitleConfig;
+
 
   private isAnimate: boolean;
   private isPointEvent: boolean;
@@ -27,6 +30,7 @@ class Styler {
     this.backgroundConfig = config.backgroundConfig;
     this.lineConfigList = config.lineConfigList
     this.tooltipConfig = config.tooltipConfig;
+    this.chartTitleConfig = config.chartTitleConfig;
 
     this.isAnimate = config.isAnimate;
     this.isPointEvent = config.isPointEvent;
@@ -59,6 +63,10 @@ class Styler {
 
   getTooltipType(): string {
     return this.tooltipConfig.type;
+  }
+
+  getChartTitle() : ChartTitleConfig{
+    return this.chartTitleConfig;
   }
 
   setHorizontalStyle() {

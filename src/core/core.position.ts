@@ -53,8 +53,8 @@ export interface FindPointIndex {
 
 const DEFAULT_X_AXIS_PADDING = 20;
 const DEFAULT_Y_AXIS_PADDING = 20;
-const DEFAULT_X_AXIS_MARGIN = 20;
-const DEFAULT_Y_AXIS_MARGIN = 20;
+const DEFAULT_X_AXIS_MARGIN = 40;
+const DEFAULT_Y_AXIS_MARGIN = 40;
 
 class Position {
   private width: number;
@@ -80,14 +80,18 @@ class Position {
   private yAxisUnit: number;
 
   constructor(width: number, height: number, config: BaseConfig) {
-    this.width = width
-    this.height = height
+    //canvas size
+    this.width = config.width
+    this.height = config.height;
 
+    // 표준 x,y축 padding
     this.baseXAxisPadding = DEFAULT_X_AXIS_PADDING;
     this.baseYAxisPadding = DEFAULT_Y_AXIS_PADDING;
 
+    //표준 x,y축 margin
     this.baseXAxisMargin = DEFAULT_X_AXIS_MARGIN;
     this.baseYAxisMargin = DEFAULT_Y_AXIS_MARGIN;
+
 
     this.xAxisGap = config.xAxisGap
     this.yAxisGap = config.yAxisGap
@@ -139,13 +143,15 @@ class Position {
   }
 
   getRectPixel(): BasePixel {
+    //canvas size 반환
     return {
       x: this.width,
-      y: this.height
+      y: this.height,
     }
   }
 
   getXAxisDrawPixels(): AxisDrawPixel[] {
+    //gap을 유동값으로 해야 legend의 동적 애니메이션 구현이 가능할 듯 함
     let axisDrawPixelList: AxisDrawPixel[] = []
 
     let baseXDrawPoint = this.minXAxis

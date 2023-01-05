@@ -9,7 +9,7 @@ class TaskRunner {
     this.task = task;
   }
 
-  static buildTaskRunner(parameters: any[] | null, task: Function) {
+  static createTaskRunner(parameters: any[] | null, task: Function) {
     return new TaskRunner(parameters, task);
   }
 

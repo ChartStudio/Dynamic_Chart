@@ -109,6 +109,7 @@ class BaseChart {
    * base setting canvas
    */
   area(config: BaseConfig) {
+
     this.canvas.style.width = config.width + 'px';
     this.canvas.style.height = config.height + 'px';
     this.canvas.width = this.canvas.offsetWidth;

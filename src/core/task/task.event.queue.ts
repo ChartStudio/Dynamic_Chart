@@ -24,8 +24,9 @@ class TaskEventQueue {
     this.eventSkipUnit = DEFAULT_EVENT_SKIP_UNIT
   }
 
-  regist(type: string, parameters: any[] | null, task: Function) {
-    this.queue.push(this.buildTaskEvent(type, parameters, task))
+  register(type: string, parameters: any[] | null, task: Function) {
+    //콜백과 콜백의 prams를 받아 TaskEvent를 생성하고 실행
+    this.queue.push(this.createTaskEvent(type, parameters, task))
     this.run()
   }
 
@@ -44,11 +45,13 @@ class TaskEventQueue {
 
     let taskEvent = this.queue.shift()
 
+    //유효한 태스크가 아닌 경우 버림
     if (!this.isValidTask(taskEvent) && this.queue.length !== 0) {
       this.execute()
       return;
     }
-    
+
+    //유효한 태스크의 경우 태스크 run, 재귀적으로 실행
     taskEvent?.runner.run()
     .then((value) => {
       // console.log(`task success: ${value}`)
@@ -60,6 +63,7 @@ class TaskEventQueue {
   }
 
   private isValidTask(taskEvent: TaskEvent | undefined): boolean {
+    //태스크 이벤트가 정상적으로 생성되지 않은 경우
     if (taskEvent === undefined) {
       return false;
     }
@@ -68,6 +72,7 @@ class TaskEventQueue {
       return true;
     }
 
+    //테스크가 생성된 시점과 excute 되는 시점의 차이가 스킵 단위보다 크면 정상적인 테스크
     if (taskEvent.createTime + this.eventSkipUnit > Date.now()) {
       return true;
     }
@@ -79,11 +84,11 @@ class TaskEventQueue {
     this.isLooping = !this.isLooping
   }
 
-  private buildTaskEvent(type: string, parameters: any[] | null, task: Function): TaskEvent {
+  private createTaskEvent(type: string, parameters: any[] | null, task: Function): TaskEvent {
     return {
       type: type, 
       createTime: Date.now(),
-      runner: TaskRunner.buildTaskRunner(parameters, task)
+      runner: TaskRunner.createTaskRunner(parameters, task)
     }
   }
 }

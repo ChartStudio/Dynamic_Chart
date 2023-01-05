@@ -1,14 +1,6 @@
-import {ChartTitle, TitleType} from "../type";
+import {ChartTitle, TitleOptions, TitleType} from "../type";
 
-export interface TitleOptions{
-    font?:string,
-    fontSize?:number,
-    fontWeight?:string,
-    color?:string,
-    backgroundColor?:string,
-    shadow?:string,
-    link?:string,
-}
+
 
 const DEFAULT_TITLE_OPTIONS: TitleOptions = {
     backgroundColor: "rgba(255,255,255,0)", //transparent

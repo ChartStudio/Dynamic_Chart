@@ -52,9 +52,6 @@ const DEFAULT_HEIGHT = 200;
 const DEFAULT_X_AXIS_GAP = 5;
 const DEFAULT_Y_AXIS_GAP = 5;
 
-const DEFAULT_EXTRA_HEIGHT_FOR_TITLE = 50;
-
-
 class BaseConfig {
   type: string;
   width: number = DEFAULT_WIDTH;
@@ -75,7 +72,7 @@ class BaseConfig {
   backgroundConfig: BackgroundStyleConfig;
   tooltipConfig: TooltipStyleConfig;
 
-  chartTitleConfig:ChartTitleConfig;
+  chartTitleConfig: ChartTitleConfig;
 
   lineConfigList: LineStyleConfig[];
 
@@ -120,7 +117,6 @@ class BaseConfig {
 
     // title config
     this.chartTitleConfig = ChartTitleConfig.createTitleConfig(options.title)
-    if(this.chartTitleConfig.getTitleType() !== 'none') this.height += DEFAULT_EXTRA_HEIGHT_FOR_TITLE;
 
     // data flow config
     this.dataFlowConfig = new DataFlowConfig(options.graph.line.datasets)

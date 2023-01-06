@@ -1,8 +1,8 @@
 import {ChartTitle, TitleOptions, TitleType} from "../type";
 
 
-
 const DEFAULT_TITLE_OPTIONS: TitleOptions = {
+    type:"TitleOptions",
     backgroundColor: "rgba(255,255,255,0)", //transparent
     color: "#ffffff",
     font: "Noto Sans KR",
@@ -12,35 +12,42 @@ const DEFAULT_TITLE_OPTIONS: TitleOptions = {
     shadow: ""
 }
 
+const DEFAULT_NONE_TITLE = "";
+const DEFAULT_INVALID_TITLE = "";
+
+
 class ChartTitleConfig{
     private content: string;
     private options: TitleOptions;
-    private type: TitleType;
+    private titleType: TitleType;
 
 
-    constructor(content?: string | ChartTitleConfig | undefined, type?: TitleType, options?: TitleOptions) {
-        if(typeof content === "undefined"){
-            this.type = "none";
-            this.content = "undefined Title";
-            this.options = DEFAULT_TITLE_OPTIONS;
-        } else if (typeof content === "string"){
-            this.type = type ?? "standard";
-            this.content = content;
-            this.options = options ?? DEFAULT_TITLE_OPTIONS;
-        }else{
-            this.type = content.type ?? "standard";
-            this.content = content.content ?? "DEFAULT TITLE";
-            this.options = content.options ?? DEFAULT_TITLE_OPTIONS;
-        }
-
+    constructor(content:string, type:TitleType, options:TitleOptions) {
+        this.titleType = type;
+        this.content = content;
+        this.options = options;
     }
 
-    getTitleInfo():ChartTitle{
-        return {content:this.content, options: this.options, type: this.type}
+
+    public static createTitleConfig(title: ChartTitle | string | undefined, options?:TitleOptions):ChartTitleConfig{
+        if (typeof title === "undefined"){
+            return new ChartTitleConfig(DEFAULT_NONE_TITLE,"none", options ?? DEFAULT_TITLE_OPTIONS)
+        }
+        if (typeof title === "string"){
+            return new ChartTitleConfig(title, "standard", options ?? DEFAULT_TITLE_OPTIONS)
+        } else if ('type' in title && title.type === 'ChartTitle'){
+            return new ChartTitleConfig(title.content, "standard", title.options ?? DEFAULT_TITLE_OPTIONS);
+        } else {
+            return new ChartTitleConfig(DEFAULT_INVALID_TITLE, "none",DEFAULT_TITLE_OPTIONS);
+        }
+    }
+
+    getTitleConfig(): ChartTitle{
+        return {content : this.content, titleType :this.titleType, options: this.options, type:'ChartTitle'};
     }
 
     getTitleType():TitleType{
-        return this.type;
+        return this.titleType;
     }
 
     getTitleContent():string{
@@ -52,7 +59,7 @@ class ChartTitleConfig{
     }
 
     setTitleType(type:TitleType):void{
-        this.type = type;
+        this.titleType = type;
     }
     setTitleContent(content:string):void{
         this.content = content;
@@ -61,5 +68,6 @@ class ChartTitleConfig{
         this.options = options;
     }
 }
+
 
 export default ChartTitleConfig;

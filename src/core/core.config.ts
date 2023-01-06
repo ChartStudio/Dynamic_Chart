@@ -8,11 +8,11 @@ import {
   TooltipStyleConfig,
   ChartTitleConfig
 } from '../config'
-import { 
-  HorizontalStyle, 
-  VerticalStyle, 
-  BackgroundStyle, 
-  DataFlow, 
+import {
+  HorizontalStyle,
+  VerticalStyle,
+  BackgroundStyle,
+  DataFlow,
   EventFlow,
   TooltipStyle,
   ChartTitle,
@@ -20,7 +20,7 @@ import {
 
 interface Options {
   type: string;
-  title?: ChartTitleConfig | string | undefined;
+  title?: ChartTitle | string | undefined;
   width?: number;
   height?: number;
   graph: {
@@ -74,6 +74,7 @@ class BaseConfig {
   verticalConfig: VerticalStyleConfig;
   backgroundConfig: BackgroundStyleConfig;
   tooltipConfig: TooltipStyleConfig;
+
   chartTitleConfig:ChartTitleConfig;
 
   lineConfigList: LineStyleConfig[];
@@ -98,7 +99,7 @@ class BaseConfig {
     this.type = options.type;
     this.width = options.width ?? DEFAULT_WIDTH
     this.height = options.height ?? DEFAULT_HEIGHT
-    this.height += DEFAULT_EXTRA_HEIGHT_FOR_TITLE
+
 
     this.xAxisGap = options.graph.xAxis.gap ?? DEFAULT_X_AXIS_GAP
     this.yAxisGap = options.graph.yAxis.gap ?? DEFAULT_Y_AXIS_GAP
@@ -116,7 +117,10 @@ class BaseConfig {
     this.backgroundConfig = new BackgroundStyleConfig(options.graph.background)
     this.lineConfigList = options.graph.line.datasets.map((value: DataFlow) : LineStyleConfig => new LineStyleConfig(value.style));
     this.tooltipConfig = new TooltipStyleConfig(options.graph.tooltip)
-    this.chartTitleConfig = new ChartTitleConfig(options.title)
+
+    // title config
+    this.chartTitleConfig = ChartTitleConfig.createTitleConfig(options.title)
+    if(this.chartTitleConfig.getTitleType() !== 'none') this.height += DEFAULT_EXTRA_HEIGHT_FOR_TITLE;
 
     // data flow config
     this.dataFlowConfig = new DataFlowConfig(options.graph.line.datasets)

@@ -62,7 +62,7 @@ class GraphView {
     let pixel = this.position.getRectPixel()
     let image = this.styler.getBackgroundImage()
 
-    this.context?.drawImage(image, 0, 0, pixel.x+200, pixel.y+200);
+    this.context?.drawImage(image, 0, 0, pixel.x, pixel.y);
   }
 
   drawXAxis() {

@@ -19,7 +19,7 @@ class GraphTaskController {
   }
 
   init() {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "primary", 
       [this.layerSnapshot, this.graphView], 
       GraphViewTask.initTask
@@ -27,7 +27,7 @@ class GraphTaskController {
   }
 
   flowLine(interval: number, endCondition: number) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, interval, endCondition], 
       GraphAnimationTask.flowLineTask
@@ -35,7 +35,7 @@ class GraphTaskController {
   }
 
   singlePointPopUp(lineIndex: number, index: number) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, lineIndex, index], 
       GraphAnimationTask.singlePointPopUpTask
@@ -43,7 +43,7 @@ class GraphTaskController {
   }
 
   singlePointPopDown(lineIndex: number, index: number) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, lineIndex, index], 
       GraphAnimationTask.singlePointPopDownTask
@@ -51,7 +51,7 @@ class GraphTaskController {
   }
 
   singleInteractivePointPopUp(lineIndex: number, index: number) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, lineIndex, index], 
       GraphAnimationTask.singleInteractivePointPopUpTask
@@ -59,7 +59,7 @@ class GraphTaskController {
   }
 
   singleInteractivePointPopDown(lineIndex: number, index: number) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, lineIndex, index], 
       GraphAnimationTask.singleInteractivePointPopDownTask
@@ -67,7 +67,7 @@ class GraphTaskController {
   }
 
   multiplePointPopUp(index: number, isTooltip: boolean) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, index, isTooltip], 
       GraphAnimationTask.multiplePointPopUpTask
@@ -75,7 +75,7 @@ class GraphTaskController {
   }
 
   multiplePointPopUpDown(lastIndex: number, index: number, isTooltip: boolean) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, lastIndex, index, isTooltip], 
       GraphAnimationTask.multiplePointPopUpDownTask
@@ -83,7 +83,7 @@ class GraphTaskController {
   }
 
   multiplePointPopDown(index: number, isTooltip: boolean) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, index, isTooltip], 
       GraphAnimationTask.multiplePointPopDownTask
@@ -91,7 +91,7 @@ class GraphTaskController {
   }
 
   fixedPointPopUp(x: number, index: number, isTooltip: boolean) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, x, index, isTooltip], 
       GraphAnimationTask.fixedPointPopUpTask
@@ -99,7 +99,7 @@ class GraphTaskController {
   }
 
   fixedPointPopDown(x: number,index: number, isTooltip: boolean) {
-    this.taskEventQueue.register(
+    this.taskEventQueue.regist(
       "event", 
       [this.animate, this.layerSnapshot, this.graphView, x, index, isTooltip], 
       GraphAnimationTask.fixedPointPopDownTask

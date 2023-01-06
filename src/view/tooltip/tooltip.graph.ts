@@ -6,7 +6,7 @@ class GraphTooltip {
   private context: CanvasRenderingContext2D | null;
 
   // Postion Object
-  private position: Position
+  private position: Position;
 
   // Styler Object
   private styler: Styler

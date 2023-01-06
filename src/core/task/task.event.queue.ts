@@ -25,7 +25,7 @@ class TaskEventQueue {
   }
 
   regist(type: string, parameters: any[] | null, task: Function) {
-    this.queue.push(this.buildTaskEvent(type, parameters, task))
+    this.queue.push(this.createTaskEvent(type, parameters, task))
     this.run()
   }
 
@@ -48,7 +48,7 @@ class TaskEventQueue {
       this.execute()
       return;
     }
-    
+
     taskEvent?.runner.run()
     .then((value) => {
       // console.log(`task success: ${value}`)
@@ -79,11 +79,11 @@ class TaskEventQueue {
     this.isLooping = !this.isLooping
   }
 
-  private buildTaskEvent(type: string, parameters: any[] | null, task: Function): TaskEvent {
+  private createTaskEvent(type: string, parameters: any[] | null, task: Function): TaskEvent {
     return {
       type: type, 
       createTime: Date.now(),
-      runner: TaskRunner.buildTaskRunner(parameters, task)
+      runner: TaskRunner.createTaskRunner(parameters, task)
     }
   }
 }

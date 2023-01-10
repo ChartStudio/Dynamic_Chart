@@ -6,3 +6,4 @@ export {DataFlow, GraphData} from './type.data.flow'
 export {TooltipStyle} from './type.tooltip.style'
 export {EventFlow} from './type.event.flow'
 export {ChartTitle, TitleType, TitleOptions} from "./type.chart.title"
+export {ChartLegend, ChartLegendType, LegendOptions, LegendStyles} from "./type.chart.legend"

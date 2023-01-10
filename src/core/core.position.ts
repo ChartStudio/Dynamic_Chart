@@ -1,5 +1,5 @@
 import BaseConfig from "./core.config"
-import { DataFlowConfig, LineStyleConfig } from '../config'
+import {ChartLegendConfig, ChartTitleConfig, DataFlowConfig, LineStyleConfig} from '../config'
 import { GraphData } from '../type'
 import { FrameUtil, Frame } from '../util';
 
@@ -52,7 +52,7 @@ export interface FindPointIndex {
 }
 
 const DEFAULT_X_AXIS_PADDING = 20;
-const DEFAULT_Y_AXIS_PADDING = 20;
+const DEFAULT_Y_AXIS_PADDING = 80;
 const DEFAULT_X_AXIS_MARGIN = 40;
 const DEFAULT_Y_AXIS_MARGIN = 40;
 
@@ -92,6 +92,9 @@ class Position {
     this.baseXAxisMargin = DEFAULT_X_AXIS_MARGIN;
     this.baseYAxisMargin = DEFAULT_Y_AXIS_MARGIN;
 
+    //title과 legend 유무에 따른 padding과 margin 설정
+    this.setTitleSpace(config.chartTitleConfig)
+    this.setLegendSpace(config.chartLegendConfig)
 
     this.xAxisGap = config.xAxisGap
     this.yAxisGap = config.yAxisGap
@@ -108,6 +111,21 @@ class Position {
     this.dataFlowConfig = config.dataFlowConfig
   }
 
+  setTitleSpace(titleConfig:ChartTitleConfig){
+    if(titleConfig.getTitleType() !== "none"){
+      this.baseYAxisMargin += 10;
+    }
+  }
+  setLegendSpace(legendConfig:ChartLegendConfig): void{
+    if(legendConfig.getLegendType() !== 'none'){
+      if(legendConfig.getLegendPosition() === 'top'){
+        this.baseYAxisMargin += legendConfig.getLegendHeight()
+      } else {
+        this.baseYAxisPadding += legendConfig.getLegendHeight()
+      }
+    }
+  }
+
   getMaxYAxisPixel(): number {
     return this.baseYAxisMargin
   }
@@ -118,6 +136,10 @@ class Position {
 
   getMinYAxisPixel(): number {
     return this.height - this.baseYAxisPadding
+  }
+
+  getMiddleXAxisPixel(): number {
+    return (this.width - this.baseXAxisMargin - this.baseXAxisPadding)/2
   }
 
   isLeft(index: number): boolean {
@@ -400,6 +422,18 @@ class Position {
     let y = line[index].y
 
     return style.tooltipCallback(x, y, lineIndex)
+  }
+
+  getLegendBoxPixel(legendConfig:ChartLegendConfig){
+    const DEFAULT_LEGEND_BOX_GAP = 5;
+    const middleXAxisPixel = this.getMiddleXAxisPixel()
+
+
+    if(legendConfig.getLegendPosition() === "top"){
+
+    } else if (legendConfig.getLegendPosition() === "bottom"){
+
+    }
   }
 }
 

@@ -40,6 +40,7 @@ class GraphView {
     this.context?.fillText(this.styler.getChartTitle().getTitleContent(),  pixel.x / 2, 20)
   }
 
+
   drawBackground() {
     if (this.styler.isActiveBackground() === false) {
       return;

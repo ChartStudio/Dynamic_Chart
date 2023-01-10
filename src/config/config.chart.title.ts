@@ -22,7 +22,7 @@ class ChartTitleConfig{
     private titleType: TitleType;
 
 
-    constructor(content:string, type:TitleType, options:TitleOptions) {
+    private constructor(content:string, type:TitleType, options:TitleOptions) {
         this.titleType = type;
         this.content = content;
         this.options = options;

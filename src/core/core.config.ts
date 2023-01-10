@@ -1,12 +1,12 @@
-import { 
-  HorizontalStyleConfig, 
-  VerticalStyleConfig, 
-  BackgroundStyleConfig, 
-  LineStyleConfig, 
-  DataFlowConfig, 
+import {
+  HorizontalStyleConfig,
+  VerticalStyleConfig,
+  BackgroundStyleConfig,
+  LineStyleConfig,
+  DataFlowConfig,
   EventFlowConfig,
   TooltipStyleConfig,
-  ChartTitleConfig
+  ChartTitleConfig, ChartLegendConfig
 } from '../config'
 import {
   HorizontalStyle,
@@ -17,13 +17,16 @@ import {
   TooltipStyle,
   ChartTitle,
 } from '../type'
+import {ChartLegend} from "../type/type.chart.legend";
 
 interface Options {
   type: string;
-  title?: ChartTitle | string | undefined;
   width?: number;
   height?: number;
+  title?: ChartTitle | string | undefined;
+  legend?:ChartLegend | undefined;
   graph: {
+    isLegend:boolean;
     xAxis: {
       gap?: number;
       style?: VerticalStyle;
@@ -73,6 +76,7 @@ class BaseConfig {
   tooltipConfig: TooltipStyleConfig;
 
   chartTitleConfig: ChartTitleConfig;
+  chartLegendConfig: ChartLegendConfig;
 
   lineConfigList: LineStyleConfig[];
 
@@ -117,6 +121,7 @@ class BaseConfig {
 
     // title config
     this.chartTitleConfig = ChartTitleConfig.createTitleConfig(options.title)
+    this.chartLegendConfig = ChartLegendConfig.createChartLegend(options.legend)
 
     // data flow config
     this.dataFlowConfig = new DataFlowConfig(options.graph.line.datasets)

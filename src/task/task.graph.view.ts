@@ -6,6 +6,7 @@ class GraphViewTask {
     return new Promise((resolve, reject) => {
       graphView.refreshCanvas()
       graphView.drawBackground()
+      graphView.drawChartTitle()
       graphView.drawXAxis()
       graphView.drawYAxis()
       layerSnapshot.shot("flow")

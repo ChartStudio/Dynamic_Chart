@@ -13,6 +13,7 @@ class GraphAnimationTask {
           layerSnapshot.print("flow")
         } else {
           graphView.drawBackground()
+          graphView.drawChartTitle()
           graphView.drawYAxis()
           graphView.drawXAxis()
         }
@@ -45,6 +46,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -55,6 +57,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -89,6 +92,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -99,6 +103,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -133,6 +138,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -143,6 +149,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -177,6 +184,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -187,6 +195,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -221,6 +230,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -231,6 +241,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -267,6 +278,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -277,6 +289,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -312,6 +325,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -322,6 +336,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -357,6 +372,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -371,6 +387,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -404,6 +421,7 @@ class GraphAnimationTask {
             layerSnapshot.print("point")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()
@@ -418,6 +436,7 @@ class GraphAnimationTask {
             layerSnapshot.print("line")
           } else {
             graphView.drawBackground()
+            graphView.drawChartTitle()
             graphView.drawYAxis()
             graphView.drawXAxis()
             graphView.drawLines()

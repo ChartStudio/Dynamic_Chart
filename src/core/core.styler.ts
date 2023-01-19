@@ -4,10 +4,11 @@ import {
   LineStyleConfig,
   BackgroundStyleConfig,
   TooltipStyleConfig,
-  ChartTitleConfig, ChartLegendConfig,
-} from '../config'
-import { ColorUtil } from '../util' 
-import BaseConfig from "./core.config"
+  ChartTitleConfig,
+  ChartLegendConfig,
+} from "../config";
+import { ColorUtil } from "../util";
+import BaseConfig from "./core.config";
 
 class Styler {
   private context: CanvasRenderingContext2D | null;
@@ -19,7 +20,6 @@ class Styler {
   private chartTitleConfig: ChartTitleConfig;
   private chartLegendConfig: ChartLegendConfig;
 
-
   private isAnimate: boolean;
   private isPointEvent: boolean;
   private isTooltipEvent: boolean;
@@ -29,7 +29,7 @@ class Styler {
     this.horizontalConfig = config.horizontalConfig;
     this.verticalConfig = config.verticalConfig;
     this.backgroundConfig = config.backgroundConfig;
-    this.lineConfigList = config.lineConfigList
+    this.lineConfigList = config.lineConfigList;
     this.tooltipConfig = config.tooltipConfig;
     this.chartTitleConfig = config.chartTitleConfig;
     this.chartLegendConfig = config.chartLegendConfig;
@@ -38,13 +38,13 @@ class Styler {
     this.isPointEvent = config.isPointEvent;
     this.isTooltipEvent = config.isTooltipEvent;
   }
-  
+
   isActivaPointEvent(): boolean {
-    return this.isPointEvent
+    return this.isPointEvent;
   }
 
   isActivaAnimation(): boolean {
-    return this.isAnimate
+    return this.isAnimate;
   }
 
   isActiveTooltipEvent(): boolean {
@@ -67,21 +67,21 @@ class Styler {
     return this.tooltipConfig.type;
   }
 
-  getChartTitle() : ChartTitleConfig{
+  getChartTitle(): ChartTitleConfig {
     return this.chartTitleConfig;
   }
 
-
-
-
+  getChartLegendInfo() {}
 
   setHorizontalStyle() {
     this.context!.strokeStyle = this.horizontalConfig.strokeStyle;
     this.context!.fillStyle = this.horizontalConfig.fillStyle;
     this.context!.font = this.horizontalConfig.font;
     this.context!.lineWidth = this.horizontalConfig.lineWidth;
-    this.context!.textBaseline = this.horizontalConfig.textBaseline as CanvasTextBaseline;
-    this.context!.textAlign = this.horizontalConfig.textAlign as CanvasTextAlign;
+    this.context!.textBaseline = this.horizontalConfig
+      .textBaseline as CanvasTextBaseline;
+    this.context!.textAlign = this.horizontalConfig
+      .textAlign as CanvasTextAlign;
   }
 
   setVerticalStyle() {
@@ -89,27 +89,42 @@ class Styler {
     this.context!.fillStyle = this.verticalConfig.fillStyle;
     this.context!.font = this.verticalConfig.font;
     this.context!.lineWidth = this.verticalConfig.lineWidth;
-    this.context!.textBaseline = this.verticalConfig.textBaseline as CanvasTextBaseline;
+    this.context!.textBaseline = this.verticalConfig
+      .textBaseline as CanvasTextBaseline;
     this.context!.textAlign = this.verticalConfig.textAlign as CanvasTextAlign;
   }
 
   setTooltipBoxStyle() {
     this.context!.lineJoin = this.tooltipConfig.boxLineJoin as CanvasLineJoin;
     this.context!.lineWidth = this.tooltipConfig.boxLineWidth;
-    this.context!.strokeStyle = this.getDetailColor(this.tooltipConfig.boxStrokeStyle, this.tooltipConfig.boxStrokeOpacity);
-    this.context!.fillStyle = this.getDetailColor(this.tooltipConfig.boxFillStyle, this.tooltipConfig.boxFillOpacity);
+    this.context!.strokeStyle = this.getDetailColor(
+      this.tooltipConfig.boxStrokeStyle,
+      this.tooltipConfig.boxStrokeOpacity,
+    );
+    this.context!.fillStyle = this.getDetailColor(
+      this.tooltipConfig.boxFillStyle,
+      this.tooltipConfig.boxFillOpacity,
+    );
   }
 
   setTooltipLineStyle() {
     this.context!.lineWidth = this.tooltipConfig.lineLineWidth;
-    this.context!.strokeStyle = this.getDetailColor(this.tooltipConfig.lineStrokeStyle, this.tooltipConfig.lineStrokeOpacity);
-    this.context!.fillStyle = this.getDetailColor(this.tooltipConfig.lineFillStyle, this.tooltipConfig.lineFillOpacity);
+    this.context!.strokeStyle = this.getDetailColor(
+      this.tooltipConfig.lineStrokeStyle,
+      this.tooltipConfig.lineStrokeOpacity,
+    );
+    this.context!.fillStyle = this.getDetailColor(
+      this.tooltipConfig.lineFillStyle,
+      this.tooltipConfig.lineFillOpacity,
+    );
   }
 
   setTooltipFontStyle(index: number) {
     this.context!.fillStyle = this.lineConfigList[index].tooltipFillStyle;
-    this.context!.textAlign = this.lineConfigList[index].tooltipTextAlign as CanvasTextAlign
-    this.context!.textBaseline = this.lineConfigList[index].tooltipTextBaseline as CanvasTextBaseline
+    this.context!.textAlign = this.lineConfigList[index]
+      .tooltipTextAlign as CanvasTextAlign;
+    this.context!.textBaseline = this.lineConfigList[index]
+      .tooltipTextBaseline as CanvasTextBaseline;
     this.context!.font = this.lineConfigList[index].tooltipFont;
   }
 
@@ -121,21 +136,28 @@ class Styler {
   }
 
   setBackgroundStyle() {
-    this.context!.fillStyle = this.getDetailColor(this.backgroundConfig.fillStyle, this.backgroundConfig.opacity);
+    this.context!.fillStyle = this.getDetailColor(
+      this.backgroundConfig.fillStyle,
+      this.backgroundConfig.opacity,
+    );
   }
 
   setDetailFillStyle(color: string, opacity: number) {
-    this.context!.fillStyle = this.getDetailColor(color, opacity)
-  }
-
-  private getDetailColor(color: string, opacity: number): string {
-    let rgb = ColorUtil.hexToRgb(color)
-    return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
+    this.context!.fillStyle = this.getDetailColor(color, opacity);
   }
 
   setDetailStrokeStyle(strokeStyle: string, width: number) {
     this.context!.strokeStyle = strokeStyle;
     this.context!.lineWidth = width;
+  }
+
+  setSquareColorWithLineStyle(style: LineStyleConfig, opacity: number) {
+    this.context!.fillStyle = this.getDetailColor(style.strokeStyle, opacity);
+  }
+
+  private getDetailColor(color: string, opacity: number): string {
+    let rgb = ColorUtil.hexToRgb(color);
+    return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
   }
 }
 

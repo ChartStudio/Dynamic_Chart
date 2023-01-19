@@ -1,5 +1,3 @@
-import {BaseConfig} from "../core";
-import {LineStyleConfig} from "./index";
 import {
     ChartLegend,
     ChartLegendPosition,
@@ -15,6 +13,7 @@ const DEFAULT_LEGEND_POSITION = "top";
 const DEFAULT_LEGEND_TYPE = "none"
 const DEFAULT_LEGEND_OPTIONS:LegendOptions = {type:"LegendOptions"}
 const DEFAULT_LEGEND_STYLES:LegendStyles = {type:"LegendStyle"};
+const DEFAULT_LEGEND_BOX_GAP = 5;
 
 const DEFAULT_SUBTITLE_LIST:string[] =[]
 
@@ -26,19 +25,21 @@ class ChartLegendConfig{
     private subTitleList:string[]
     private styles:LegendStyles
     private options:LegendOptions
+    private gap:number;
 
 
-    constructor(width?:number, height?:number, position?:ChartLegendPosition, legendType?:ChartLegendType, subTitleList?:string[], styles?:LegendStyles, options?:LegendOptions) {
-        this.width = (width ?? DEFAULT_LEGEND_WIDTH)
-        this.height = (height ?? DEFAULT_LEGEND_HEIGHT)
+    constructor(width?:number, height?:number, position?:ChartLegendPosition, legendType?:ChartLegendType, subTitleList?:string[], styles?:LegendStyles, options?:LegendOptions, gap?:number) {
+        this.width = (width ?? DEFAULT_LEGEND_WIDTH);
+        this.height = (height ?? DEFAULT_LEGEND_HEIGHT);
         this.position = position ?? DEFAULT_LEGEND_POSITION;
         this.legendType = legendType ?? DEFAULT_LEGEND_TYPE;
         this.subTitleList = subTitleList ?? DEFAULT_SUBTITLE_LIST;
         this.styles = styles ?? DEFAULT_LEGEND_STYLES;
         this.options = options ?? DEFAULT_LEGEND_OPTIONS;
+        this.gap = gap ?? DEFAULT_LEGEND_BOX_GAP;
     }
 
-    public static createChartLegend(legend:ChartLegend | undefined){
+    public static createChartLegendConfig(legend:ChartLegend | undefined){
         if(!!legend){
             return new ChartLegendConfig(legend.width, legend.height, legend.position, legend.legendType, legend.subTitleList, legend.styles, legend.options)
         }
@@ -59,6 +60,10 @@ class ChartLegendConfig{
 
     getLegendPosition(){
         return this.position
+    }
+
+    getLegendGap(){
+        return this.gap
     }
 }
 

@@ -121,10 +121,12 @@ class BaseConfig {
 
     // title config
     this.chartTitleConfig = ChartTitleConfig.createTitleConfig(options.title)
-    this.chartLegendConfig = ChartLegendConfig.createChartLegend(options.legend)
 
     // data flow config
     this.dataFlowConfig = new DataFlowConfig(options.graph.line.datasets)
+
+    // legend config
+    this.chartLegendConfig = ChartLegendConfig.createChartLegendConfig(options.legend)
 
     // event flow config
     this.eventFlowConfig = new EventFlowConfig(options.graph.event)
@@ -136,7 +138,7 @@ class BaseConfig {
     this.minYAxis = this.dataFlowConfig.getYAxisMinValue()
 
     this.totalXWidth = this.maxXAxis - this.minXAxis
-    this.totalYHeight =this.maxYAxis - this.minYAxis
+    this.totalYHeight = this.maxYAxis - this.minYAxis
     this.yAxisUnit = this.buildYAxisUnit()
     this.xAxisUnit = this.buildXAxisUnit()
   }

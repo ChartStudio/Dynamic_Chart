@@ -1,80 +1,98 @@
-import { LineStyleConfig } from '../config'
-import Styler from '../core/core.styler'
-import { default as Position, LineDrawPixels } from '../core/core.position'
-import { GraphTooltip } from './tooltip';
-import { GraphPoint } from './point';
+import { LineStyleConfig } from "../config";
+import Styler from "../core/core.styler";
+import { default as Position, LineDrawPixels } from "../core/core.position";
+import { GraphTooltip } from "./tooltip";
+import { GraphPoint } from "./point";
+import { GraphLegend } from "./legend";
 
 class GraphView {
   private context: CanvasRenderingContext2D | null;
 
   // Postion Object
-  private position: Position
+  private position: Position;
 
   // Styler Object
-  private styler: Styler
+  private styler: Styler;
 
   // Sub domain
   private graphPoint: GraphPoint;
   private graphTooltip: GraphTooltip;
+  private graphLegend: GraphLegend;
 
   constructor(
-    context: CanvasRenderingContext2D | null, 
+    context: CanvasRenderingContext2D | null,
     position: Position,
-    styler: Styler
+    styler: Styler,
   ) {
     this.context = context;
     this.position = position;
     this.styler = styler;
 
-    this.graphPoint = new GraphPoint(this.context, this.position, this.styler)
-    this.graphTooltip = new GraphTooltip(this.context, this.position, this.styler)
+    this.graphPoint = new GraphPoint(this.context, this.position, this.styler);
+    this.graphTooltip = new GraphTooltip(
+      this.context,
+      this.position,
+      this.styler,
+    );
+    this.graphLegend = new GraphLegend(
+      this.context,
+      this.position,
+      this.styler,
+    );
   }
 
   refreshCanvas() {
-    let pixel = this.position.getRectPixel()
-    this.context?.clearRect(0, 0, pixel.x, pixel.y)
-  }
-
-  drawChartTitle(){
     let pixel = this.position.getRectPixel();
-    this.context?.fillText(this.styler.getChartTitle().getTitleContent(),  pixel.x / 2, 20)
+    this.context?.clearRect(0, 0, pixel.x, pixel.y);
   }
 
+  drawChartTitle() {
+    let pixel = this.position.getRectPixel();
+    this.context?.fillText(
+      this.styler.getChartTitle().getTitleContent(),
+      pixel.x / 2,
+      20,
+    );
+  }
+
+  drawChartLegend() {
+    this.graphLegend.drawChartLegend();
+  }
 
   drawBackground() {
     if (this.styler.isActiveBackground() === false) {
       return;
     }
     if (this.styler.isActiveBackgroundImage()) {
-      this.drawBackgroundWithImage()
+      this.drawBackgroundWithImage();
     } else {
-      this.drawBackgroundWithCanvas()
+      this.drawBackgroundWithCanvas();
     }
   }
 
   private drawBackgroundWithCanvas() {
-    let pixel = this.position.getRectPixel()
-    this.styler.setBackgroundStyle()
+    let pixel = this.position.getRectPixel();
+    this.styler.setBackgroundStyle();
 
     this.context?.fillRect(0, 0, pixel.x, pixel.y);
   }
 
   private drawBackgroundWithImage() {
-    let pixel = this.position.getRectPixel()
-    let image = this.styler.getBackgroundImage()
+    let pixel = this.position.getRectPixel();
+    let image = this.styler.getBackgroundImage();
 
     this.context?.drawImage(image, 0, 0, pixel.x, pixel.y);
   }
 
   drawXAxis() {
-    let pixel = this.position.getXAxisDrawPixels()
+    let pixel = this.position.getXAxisDrawPixels();
 
-    this.styler.setVerticalStyle()
+    this.styler.setVerticalStyle();
 
-    pixel.forEach(({line, text}) => {
-      this.context?.fillText(text.value, text.x, text.y)
-      this.drawVerticalLine(line.x, line.y, line.nextY)
-    })
+    pixel.forEach(({ line, text }) => {
+      this.context?.fillText(text.value, text.x, text.y);
+      this.drawVerticalLine(line.x, line.y, line.nextY);
+    });
   }
 
   private drawVerticalLine(x: number, y: number, nextY: number) {
@@ -86,14 +104,14 @@ class GraphView {
   }
 
   drawYAxis() {
-    let pixel = this.position.getYAxisDrawPixels()
+    let pixel = this.position.getYAxisDrawPixels();
 
-    this.styler.setHorizontalStyle()
+    this.styler.setHorizontalStyle();
 
-    pixel.forEach(({line, text}) => {
-      this.context?.fillText(text.value, text.x, text.y)
-      this.drawHorizontalLine(line.x, line.nextX, line.y)
-    })
+    pixel.forEach(({ line, text }) => {
+      this.context?.fillText(text.value, text.x, text.y);
+      this.drawHorizontalLine(line.x, line.nextX, line.y);
+    });
   }
 
   private drawHorizontalLine(x: number, nextX: number, y: number) {
@@ -105,7 +123,7 @@ class GraphView {
   }
 
   drawLines() {
-    let pixelList = this.position.getLineDrawPixels()
+    let pixelList = this.position.getLineDrawPixels();
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
@@ -118,8 +136,8 @@ class GraphView {
       this.styler.setLineStyle(style);
       this.context?.beginPath();
       this.context?.moveTo(line[0].x, line[0].y);
-      for (let j = 1; j < line.length; j++) {        
-        this.drawLine(line[j].x, line[j].y, style)
+      for (let j = 1; j < line.length; j++) {
+        this.drawLine(line[j].x, line[j].y, style);
       }
       this.context?.stroke();
 
@@ -139,18 +157,23 @@ class GraphView {
     }
   }
 
-  private drawLineWithFullOver(x: number, nextX: number, y: number, style: LineStyleConfig) {
+  private drawLineWithFullOver(
+    x: number,
+    nextX: number,
+    y: number,
+    style: LineStyleConfig,
+  ) {
     if (style.isFull === false) {
       return;
     }
 
-    this.styler.setDetailFillStyle(style.fullFillStyle, style.fullOpacity)
-    
+    this.styler.setDetailFillStyle(style.fullFillStyle, style.fullOpacity);
+
     this.context?.lineTo(x, y);
     this.context?.lineTo(nextX, y);
-    this.context!.globalCompositeOperation = 'destination-over';
+    this.context!.globalCompositeOperation = "destination-over";
     this.context?.fill();
-    this.context!.globalCompositeOperation = 'source-over';
+    this.context!.globalCompositeOperation = "source-over";
   }
 
   /**
@@ -158,7 +181,7 @@ class GraphView {
    */
 
   drawFlowLines(endIndex: number) {
-    let pixelList = this.position.getLineDrawPixelsForAnimation()
+    let pixelList = this.position.getLineDrawPixelsForAnimation();
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
@@ -172,14 +195,14 @@ class GraphView {
       this.context?.beginPath();
       this.context?.moveTo(line[0].x, line[0].y);
       for (let j = 1; j < endIndex; j++) {
-        this.drawLine(line[j].x, line[j].y, style)
+        this.drawLine(line[j].x, line[j].y, style);
       }
       this.context?.stroke();
 
       /**
        * Fill the Line
        */
-      let endIndexPixel = line[endIndex - 1]
+      let endIndexPixel = line[endIndex - 1];
       this.drawLineWithFullOver(endIndexPixel.x, full.nextX, full.y, style);
       this.context?.closePath();
     }
@@ -190,7 +213,7 @@ class GraphView {
    */
 
   drawPoints() {
-    let pixelList = this.position.getLineDrawPixels()
+    let pixelList = this.position.getLineDrawPixels();
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
@@ -200,13 +223,13 @@ class GraphView {
        * Draw the Point
        */
       for (let j = 0; j < line.length; j++) {
-        this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+        this.graphPoint.drawPoint(line[j].x, line[j].y, style);
       }
     }
   }
 
   drawFlowPoints(endIndex: number) {
-    let pixelList = this.position.getLineDrawPixelsForAnimation()
+    let pixelList = this.position.getLineDrawPixelsForAnimation();
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
       let style = pixelList[i].style;
@@ -216,18 +239,18 @@ class GraphView {
        */
       for (let j = 0; j < endIndex; j++) {
         if (line[j].isDot === true) {
-          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style);
         }
       }
     }
   }
 
   isDrawPointsEvent(): boolean {
-    return this.styler.isActivaPointEvent()
+    return this.styler.isActivaPointEvent();
   }
 
   drawMultiplePointPop(index: number, size: number) {
-    let pixelList = this.position.getLineDrawPixels()
+    let pixelList = this.position.getLineDrawPixels();
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
@@ -238,21 +261,31 @@ class GraphView {
        */
       for (let j = 0; j < line.length; j++) {
         if (!this.isDrawPointsEvent()) {
-          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
-          continue
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style);
+          continue;
         }
 
         if (j === index) {
-          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, size, style)
+          this.graphPoint.drawPointToFixedSize(
+            line[j].x,
+            line[j].y,
+            size,
+            style,
+          );
         } else {
-          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style);
         }
       }
     }
   }
 
-  drawMultiplePointPopUpDown(lastIndex: number, index: number, lastSize: number, size: number) {
-    let pixelList = this.position.getLineDrawPixels()
+  drawMultiplePointPopUpDown(
+    lastIndex: number,
+    index: number,
+    lastSize: number,
+    size: number,
+  ) {
+    let pixelList = this.position.getLineDrawPixels();
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
@@ -263,23 +296,33 @@ class GraphView {
        */
       for (let j = 0; j < line.length; j++) {
         if (!this.isDrawPointsEvent()) {
-          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
-          continue
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style);
+          continue;
         }
 
         if (j === index) {
-          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, size, style)
+          this.graphPoint.drawPointToFixedSize(
+            line[j].x,
+            line[j].y,
+            size,
+            style,
+          );
         } else if (j === lastIndex) {
-          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, lastSize, style)
+          this.graphPoint.drawPointToFixedSize(
+            line[j].x,
+            line[j].y,
+            lastSize,
+            style,
+          );
         } else {
-          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style);
         }
       }
     }
   }
 
   drawSinglePointPop(lineIndex: number, index: number, size: number) {
-    let pixelList = this.position.getLineDrawPixels()
+    let pixelList = this.position.getLineDrawPixels();
 
     for (let i = 0; i < pixelList.length; i++) {
       let line = pixelList[i].line;
@@ -290,14 +333,19 @@ class GraphView {
        */
       for (let j = 0; j < line.length; j++) {
         if (!this.isDrawPointsEvent()) {
-          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
-          continue
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style);
+          continue;
         }
-        
+
         if (i === lineIndex && j === index) {
-          this.graphPoint.drawPointToFixedSize(line[j].x, line[j].y, size, style)
+          this.graphPoint.drawPointToFixedSize(
+            line[j].x,
+            line[j].y,
+            size,
+            style,
+          );
         } else {
-          this.graphPoint.drawPoint(line[j].x, line[j].y, style)
+          this.graphPoint.drawPoint(line[j].x, line[j].y, style);
         }
       }
     }
@@ -307,7 +355,7 @@ class GraphView {
    * Drawing Tooltip Functions
    */
   isDrawTooltipEvent(): boolean {
-    return this.styler.isActiveTooltipEvent()
+    return this.styler.isActiveTooltipEvent();
   }
 
   drawAvgTooltips(index: number, isActive: boolean) {
@@ -315,21 +363,37 @@ class GraphView {
       return;
     }
 
-    let avgPixel = this.position.getSingleIndexToAvgPixel(index)
-    let displayData = this.position.getDisplayTooltipDatas(index)
+    let avgPixel = this.position.getSingleIndexToAvgPixel(index);
+    let displayData = this.position.getDisplayTooltipDatas(index);
 
-    this.graphTooltip.drawTooltip(avgPixel.x, avgPixel.y, displayData, index)
+    this.graphTooltip.drawTooltip(avgPixel.x, avgPixel.y, displayData, index);
   }
 
-  drawMovingAvgTooltips(lastIndex: number, index: number, size:number, gap: number, isActive: boolean) {
+  drawMovingAvgTooltips(
+    lastIndex: number,
+    index: number,
+    size: number,
+    gap: number,
+    isActive: boolean,
+  ) {
     if (isActive === false) {
       return;
     }
 
-    let movingPixel = this.position.getTwinIndexToAvgMovingPixel(lastIndex, index, size, gap)
-    let displayData = this.position.getDisplayTooltipDatas(index)
+    let movingPixel = this.position.getTwinIndexToAvgMovingPixel(
+      lastIndex,
+      index,
+      size,
+      gap,
+    );
+    let displayData = this.position.getDisplayTooltipDatas(index);
 
-    this.graphTooltip.drawTooltip(movingPixel.x, movingPixel.y, displayData, index)
+    this.graphTooltip.drawTooltip(
+      movingPixel.x,
+      movingPixel.y,
+      displayData,
+      index,
+    );
   }
 
   drawSingleTooltips(lineIndex: number, index: number, isActive: boolean) {
@@ -337,21 +401,25 @@ class GraphView {
       return;
     }
 
-    let pixel = this.position.getSingleIndexToPixel(lineIndex, index)
-    let displayData = this.position.getDisplayTooltipData(lineIndex, index)
+    let pixel = this.position.getSingleIndexToPixel(lineIndex, index);
+    let displayData = this.position.getDisplayTooltipData(lineIndex, index);
 
-    this.graphTooltip.drawTooltip(pixel.x, pixel.y, displayData, index)
+    this.graphTooltip.drawTooltip(pixel.x, pixel.y, displayData, index);
   }
 
-  drawSingleInteractiveTooltips(lineIndex: number, index: number, isActive: boolean) {
+  drawSingleInteractiveTooltips(
+    lineIndex: number,
+    index: number,
+    isActive: boolean,
+  ) {
     if (isActive === false) {
       return;
     }
 
-    let pixel = this.position.getSingleIndexToPixel(lineIndex, index)
-    let displayData = this.position.getDisplayTooltipDatas(index)
+    let pixel = this.position.getSingleIndexToPixel(lineIndex, index);
+    let displayData = this.position.getDisplayTooltipDatas(index);
 
-    this.graphTooltip.drawTooltip(pixel.x, pixel.y, displayData, index)
+    this.graphTooltip.drawTooltip(pixel.x, pixel.y, displayData, index);
   }
 
   drawFixedTooltips(x: number, index: number, isActive: boolean) {
@@ -359,10 +427,10 @@ class GraphView {
       return;
     }
 
-    let fixedY = this.position.getMiddleYAxisPixel()
-    let displayData = this.position.getDisplayTooltipDatas(index)
+    let fixedY = this.position.getMiddleYAxisPixel();
+    let displayData = this.position.getDisplayTooltipDatas(index);
 
-    this.graphTooltip.drawTooltip(x, fixedY, displayData, index)
+    this.graphTooltip.drawTooltip(x, fixedY, displayData, index);
   }
 }
 
